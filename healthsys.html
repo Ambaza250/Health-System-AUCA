@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthSys – Student Health Record Management</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green-50: #e8f7f0;
+    --green-100: #c3e9d5;
+    --green-200: #89d4ae;
+    --green-400: #2eac72;
+    --green-600: #1d7a50;
+    --green-800: #0e4a30;
+    --green-900: #072e1e;
+
+    --teal-50: #e1f5ee;
+    --teal-400: #1D9E75;
+    --teal-600: #0f6e56;
+
+    --gray-50: #f8f9fa;
+    --gray-100: #f1f3f5;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-400: #ced4da;
+    --gray-500: #adb5bd;
+    --gray-600: #6c757d;
+    --gray-700: #495057;
+    --gray-800: #343a40;
+    --gray-900: #212529;
+
+    --red-50: #fff0f0;
+    --red-400: #e24b4a;
+    --red-600: #a32d2d;
+
+    --amber-50: #faeeda;
+    --amber-400: #BA7517;
+    --amber-600: #854f0b;
+
+    --blue-50: #e6f1fb;
+    --blue-400: #378add;
+    --blue-600: #185fa5;
+
+    --font: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --sidebar-w: 220px;
+    --header-h: 56px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+    --transition: 0.18s ease;
+  }
+
+  body {
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--gray-800);
+    background: #f0f4f1;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ─── PAGES ─── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: flex; }
+
+  /* ─── LOGIN PAGE ─── */
+  #page-login {
+    align-items: stretch;
+  }
+
+  .login-panel {
+    width: 420px;
+    background: linear-gradient(160deg, #1d7a50 0%, #0e4a30 60%, #072e1e 100%);
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-panel::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .login-panel::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .login-brand {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .login-brand-icon {
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.15);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .login-brand-name { color: #fff; font-size: 18px; font-weight: 600; }
+  .login-brand-sub { color: rgba(255,255,255,0.55); font-size: 11px; }
+
+  .login-illustration {
+    text-align: center;
+    position: relative; z-index: 1;
+  }
+  .login-illustration img-placeholder {
+    display: block; width: 160px; height: 160px;
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--radius-xl);
+    margin: 0 auto 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px;
+  }
+  .login-stats {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  }
+  .login-stat {
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--radius-md);
+    padding: 10px 16px;
+    text-align: center;
+    flex: 1; min-width: 80px;
+  }
+  .login-stat-val { color: #fff; font-size: 17px; font-weight: 600; }
+  .login-stat-lbl { color: rgba(255,255,255,0.55); font-size: 10px; margin-top: 2px; }
+
+  .login-tagline { color: #fff; }
+  .login-tagline h2 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+  .login-tagline p { color: rgba(255,255,255,0.6); font-size: 13px; }
+
+  .login-form-side {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff;
+    padding: 2rem;
+  }
+
+  .login-form-box { width: 100%; max-width: 380px; }
+  .login-ssl-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #e8f7f0; color: var(--green-600);
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 500; margin-bottom: 1.75rem;
+  }
+  .login-ssl-badge::before { content: '●'; font-size: 8px; }
+
+  .login-form-box h1 { font-size: 26px; font-weight: 600; color: var(--gray-900); margin-bottom: 6px; }
+  .login-form-box .subtitle { color: var(--gray-500); font-size: 13px; margin-bottom: 2rem; }
+
+  .form-group { margin-bottom: 1.25rem; }
+  .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
+  .form-group .input-wrap { position: relative; }
+  .form-group .input-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--gray-400); font-size: 14px; pointer-events: none;
+  }
+  .form-group input {
+    width: 100%;
+    height: 42px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 0 40px;
+    font-family: var(--font); font-size: 14px; color: var(--gray-800);
+    background: #fff;
+    outline: none;
+    transition: border-color var(--transition);
+  }
+  .form-group input:focus { border-color: var(--green-400); }
+  .form-group input::placeholder { color: var(--gray-400); }
+  .form-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+  .forgot-link { font-size: 12px; color: var(--green-600); text-decoration: none; }
+
+  .btn-primary {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; height: 44px;
+    background: var(--green-400);
+    color: #fff; font-family: var(--font); font-size: 14px; font-weight: 600;
+    border: none; border-radius: var(--radius-md);
+    cursor: pointer; transition: background var(--transition);
+    margin-top: 1rem;
+  }
+  .btn-primary:hover { background: var(--green-600); }
+
+  .divider { text-align: center; color: var(--gray-400); font-size: 12px; margin: 1rem 0; position: relative; }
+  .divider::before, .divider::after {
+    content: ''; position: absolute; top: 50%; width: 40%; height: 1px;
+    background: var(--gray-200);
+  }
+  .divider::before { left: 0; }
+  .divider::after { right: 0; }
+
+  .btn-sso {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; height: 42px;
+    background: #fff; border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-md); font-family: var(--font); font-size: 14px;
+    color: var(--gray-700); cursor: pointer; transition: all var(--transition);
+  }
+  .btn-sso:hover { border-color: var(--green-400); background: var(--green-50); }
+
+  .login-badges {
+    display: flex; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap;
+  }
+  .login-badge {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--gray-500);
+  }
+  .login-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green-400); }
+
+  .login-contact { text-align: center; margin-top: 1rem; font-size: 12px; color: var(--gray-500); }
+  .login-contact a { color: var(--green-600); text-decoration: none; font-weight: 500; }
+
+  .login-footer { text-align: center; padding-top: 1.5rem; font-size: 11px; color: var(--gray-400); border-top: 1px solid var(--gray-100); margin-top: 1.5rem; }
+
+  /* ─── APP SHELL ─── */
+  .app-shell { display: flex; width: 100%; min-height: 100vh; }
+
+  .sidebar {
+    width: var(--sidebar-w);
+    background: #fff;
+    border-right: 1px solid var(--gray-200);
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 10;
+  }
+
+  .sidebar-brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 1.125rem 1.25rem;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .sidebar-brand-icon {
+    width: 34px; height: 34px;
+    background: var(--green-400);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px; font-weight: 700;
+  }
+  .sidebar-brand-name { font-size: 15px; font-weight: 600; color: var(--gray-900); }
+  .sidebar-brand-sub { font-size: 10px; color: var(--gray-500); }
+
+  .sidebar-section-label {
+    padding: 1rem 1.25rem 0.4rem;
+    font-size: 10px; font-weight: 600; color: var(--gray-400);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 1.25rem;
+    cursor: pointer;
+    border-radius: 0;
+    color: var(--gray-600); font-size: 13.5px;
+    transition: all var(--transition);
+    position: relative;
+    border: none; background: none; width: 100%; text-align: left;
+    font-family: var(--font);
+  }
+  .nav-item:hover { background: var(--gray-50); color: var(--gray-900); }
+  .nav-item.active {
+    background: var(--green-50);
+    color: var(--green-600); font-weight: 500;
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--green-400); border-radius: 0 3px 3px 0;
+  }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--green-400); color: #fff;
+    font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 10px;
+  }
+  .nav-icon { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.75; }
+  .nav-item.active .nav-icon { opacity: 1; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid var(--gray-100);
+    padding: 0.75rem 0;
+    font-size: 11px; color: var(--gray-400);
+    padding-bottom: 0.5rem;
+  }
+  .sidebar-footer p { padding: 0 1.25rem; }
+
+  /* ─── MAIN ─── */
+  .main-content {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex; flex-direction: column;
+  }
+
+  .topbar {
+    height: var(--header-h);
+    background: #fff;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex; align-items: center;
+    padding: 0 1.75rem;
+    gap: 1rem;
+    position: sticky; top: 0; z-index: 5;
+  }
+  .topbar-title { font-size: 20px; font-weight: 600; color: var(--gray-900); }
+  .topbar-sub { font-size: 12px; color: var(--gray-500); margin-top: 1px; }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
+  .topbar-date {
+    display: flex; align-items: center; gap: 6px;
+    border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+    padding: 5px 12px; font-size: 12px; color: var(--gray-600);
+  }
+  .topbar-notif {
+    position: relative; width: 34px; height: 34px;
+    background: var(--gray-100); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .topbar-notif-dot {
+    position: absolute; top: 6px; right: 6px;
+    width: 8px; height: 8px; background: var(--red-400); border-radius: 50%;
+    border: 2px solid #fff;
+  }
+  .topbar-user {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--gray-50); border-radius: var(--radius-lg);
+    padding: 5px 10px 5px 5px; cursor: pointer;
+  }
+  .topbar-avatar {
+    width: 28px; height: 28px; background: var(--green-200);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: var(--green-800);
+  }
+  .topbar-username { font-size: 13px; font-weight: 500; color: var(--gray-800); }
+  .topbar-role { font-size: 10px; color: var(--gray-500); }
+
+  .page-body { padding: 1.75rem; flex: 1; }
+
+  /* ─── CARDS / STATS ─── */
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-100);
+    padding: 1.25rem;
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  .stat-val { font-size: 28px; font-weight: 700; color: var(--gray-900); line-height: 1.1; }
+  .stat-label { font-size: 12px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .stat-change { font-size: 12px; color: var(--green-600); margin-top: 6px; }
+  .stat-icon {
+    width: 42px; height: 42px; border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+  }
+
+  /* ─── TABLE ─── */
+  .card {
+    background: #fff; border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-100); overflow: hidden;
+  }
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-100);
+  }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--gray-900); }
+  .card-sub { font-size: 12px; color: var(--gray-500); margin-top: 1px; }
+
+  table.data-table { width: 100%; border-collapse: collapse; }
+  table.data-table th {
+    text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--gray-500); padding: 10px 1.25rem;
+    border-bottom: 1px solid var(--gray-100); background: var(--gray-50);
+  }
+  table.data-table td {
+    padding: 11px 1.25rem; border-bottom: 1px solid #f5f5f5;
+    font-size: 13.5px; color: var(--gray-800);
+    vertical-align: middle;
+  }
+  table.data-table tr:last-child td { border-bottom: none; }
+  table.data-table tr:hover td { background: #fafafa; }
+
+  .student-cell { display: flex; align-items: center; gap: 9px; }
+  .avatar-sm {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0;
+  }
+  .stu-id { font-family: var(--mono); font-size: 12px; color: var(--gray-500); }
+
+  /* ─── BADGES ─── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge::before { content: '●'; font-size: 8px; }
+  .badge-green { background: #e8f7f0; color: var(--green-600); }
+  .badge-green::before { color: var(--green-400); }
+  .badge-orange { background: #fff3e0; color: #bf6000; }
+  .badge-orange::before { color: #ff9800; }
+  .badge-red { background: var(--red-50); color: var(--red-600); }
+  .badge-red::before { color: var(--red-400); }
+  .badge-blue { background: var(--blue-50); color: var(--blue-600); }
+  .badge-blue::before { color: var(--blue-400); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+  .badge-gray::before { color: var(--gray-400); }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 16px; border-radius: var(--radius-md);
+    font-family: var(--font); font-size: 13px; font-weight: 500;
+    cursor: pointer; border: 1px solid transparent; transition: all var(--transition);
+  }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn-green { background: var(--green-400); color: #fff; border-color: var(--green-400); }
+  .btn-green:hover { background: var(--green-600); border-color: var(--green-600); }
+  .btn-outline { background: #fff; border-color: var(--gray-300); color: var(--gray-700); }
+  .btn-outline:hover { border-color: var(--green-400); color: var(--green-600); background: var(--green-50); }
+
+  /* ─── QUICK ACTIONS ─── */
+  .quick-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+  .quick-action {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-radius: var(--radius-md);
+    cursor: pointer; transition: all var(--transition); border: 1px solid var(--gray-100);
+    background: #fff;
+  }
+  .quick-action:first-child { background: var(--green-400); border-color: var(--green-400); }
+  .quick-action:first-child .qa-title { color: #fff; }
+  .quick-action:first-child .qa-sub { color: rgba(255,255,255,0.65); }
+  .quick-action:first-child .qa-icon { background: rgba(255,255,255,0.2); color: #fff; }
+  .quick-action:first-child .qa-arrow { color: rgba(255,255,255,0.7); }
+  .quick-action:hover { box-shadow: var(--shadow-sm); }
+  .qa-left { display: flex; align-items: center; gap: 12px; }
+  .qa-icon {
+    width: 38px; height: 38px; border-radius: var(--radius-sm);
+    background: var(--green-50); color: var(--green-600);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .qa-title { font-size: 14px; font-weight: 500; color: var(--gray-900); }
+  .qa-sub { font-size: 12px; color: var(--gray-500); }
+  .qa-arrow { color: var(--gray-400); font-size: 18px; }
+
+  .followup-banner {
+    background: var(--green-50); border: 1px solid var(--green-100);
+    border-radius: var(--radius-md); padding: 10px 14px;
+    font-size: 12.5px; color: var(--green-600); margin-top: 0.75rem;
+    display: flex; align-items: center; gap: 7px;
+  }
+
+  /* ─── LAYOUT HELPERS ─── */
+  .two-col { display: grid; grid-template-columns: 340px 1fr; gap: 1.25rem; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+
+  /* ─── NEW VISIT FORM ─── */
+  .form-section-title {
+    font-size: 12px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--gray-500);
+    padding: 1rem 1.25rem 0.5rem;
+    border-top: 1px solid var(--gray-100);
+  }
+  .form-section-title:first-of-type { border-top: none; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 0 1.25rem 1rem; }
+  .form-full { grid-column: 1 / -1; }
+
+  .form-field { display: flex; flex-direction: column; gap: 5px; }
+  .form-field label { font-size: 12.5px; font-weight: 500; color: var(--gray-600); }
+  .form-field label .req { color: var(--red-400); margin-left: 2px; }
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    height: 38px; padding: 0 12px;
+    border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+    font-family: var(--font); font-size: 13.5px; color: var(--gray-800);
+    background: #fff; outline: none; transition: border-color var(--transition);
+    width: 100%;
+  }
+  .form-field textarea { height: 100px; padding: 10px 12px; resize: vertical; }
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus { border-color: var(--green-400); }
+  .form-field .field-hint { font-size: 11px; color: var(--gray-400); }
+
+  .severity-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .severity-btn {
+    padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500;
+    border: 1.5px solid var(--gray-200); cursor: pointer; background: #fff;
+    color: var(--gray-600); font-family: var(--font); transition: all var(--transition);
+  }
+  .severity-btn.active-mild { background: var(--green-50); color: var(--green-600); border-color: var(--green-400); }
+  .severity-btn.active-moderate { background: var(--amber-50); color: var(--amber-600); border-color: var(--amber-400); }
+  .severity-btn.active-severe { background: #fff3e0; color: #b85500; border-color: #f57c00; }
+  .severity-btn.active-emergency { background: var(--red-50); color: var(--red-600); border-color: var(--red-400); }
+
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-radius: var(--radius-md);
+    border: 1px solid var(--gray-100); background: var(--gray-50);
+  }
+  .toggle-label { font-size: 13px; font-weight: 500; color: var(--gray-700); }
+  .toggle-sub { font-size: 11px; color: var(--gray-500); }
+  .toggle {
+    width: 40px; height: 22px; background: var(--gray-300); border-radius: 11px;
+    position: relative; cursor: pointer; transition: background var(--transition);
+  }
+  .toggle.on { background: var(--green-400); }
+  .toggle::after {
+    content: ''; position: absolute;
+    width: 16px; height: 16px; background: #fff; border-radius: 50%;
+    top: 3px; left: 3px; transition: left var(--transition);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { left: 21px; }
+
+  .form-footer {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 0.75rem; padding: 1rem 1.25rem;
+    border-top: 1px solid var(--gray-100);
+  }
+  .draft-badge {
+    font-size: 11px; background: var(--amber-50); color: var(--amber-600);
+    padding: 3px 9px; border-radius: 20px; margin-right: auto;
+    font-weight: 500;
+  }
+  .required-note {
+    background: var(--green-50); border: 1px solid var(--green-100);
+    border-radius: var(--radius-md); padding: 10px 14px;
+    font-size: 12px; color: var(--green-600);
+    margin: 0 1.25rem 1rem;
+  }
+
+  /* ─── RECORDS PAGE ─── */
+  .filter-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-100);
+    flex-wrap: wrap;
+  }
+  .search-input-wrap { position: relative; flex: 1; min-width: 180px; }
+  .search-input-wrap input {
+    width: 100%; height: 36px; padding: 0 12px 0 36px;
+    border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+    font-family: var(--font); font-size: 13px; outline: none;
+    transition: border-color var(--transition); background: #fff;
+  }
+  .search-input-wrap input:focus { border-color: var(--green-400); }
+  .search-input-wrap .si { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 15px; }
+  .filter-select {
+    height: 36px; padding: 0 10px;
+    border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+    font-family: var(--font); font-size: 13px; color: var(--gray-700);
+    background: #fff; cursor: pointer; outline: none;
+  }
+  .active-filter-badge {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 10px; background: var(--green-50);
+    color: var(--green-600); border-radius: 20px; font-size: 12px; font-weight: 500;
+    border: 1px solid var(--green-100);
+  }
+  .result-count { margin-left: auto; font-size: 12px; color: var(--gray-500); }
+  .action-btn {
+    width: 30px; height: 30px; border-radius: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--gray-200); background: #fff;
+    font-size: 14px; transition: all var(--transition);
+  }
+  .action-btn:hover { border-color: var(--green-400); background: var(--green-50); }
+  .pagination {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 1.25rem; border-top: 1px solid var(--gray-100);
+    font-size: 12.5px; color: var(--gray-600);
+  }
+  .page-nums { display: flex; gap: 4px; }
+  .page-num {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12.5px; cursor: pointer; border: 1px solid var(--gray-200);
+    background: #fff; font-family: var(--font); transition: all var(--transition);
+  }
+  .page-num.active { background: var(--green-400); color: #fff; border-color: var(--green-400); }
+  .page-num:hover:not(.active) { border-color: var(--green-400); }
+
+  /* ─── SEARCH PAGE ─── */
+  .search-hero { text-align: center; padding: 1.5rem 0 2rem; }
+  .search-hero h2 { font-size: 22px; font-weight: 600; color: var(--gray-900); margin-bottom: 6px; }
+  .search-hero p { font-size: 13px; color: var(--gray-500); }
+  .search-box-wrap { position: relative; max-width: 540px; margin: 1.25rem auto 0; }
+  .search-box-wrap input {
+    width: 100%; height: 48px; padding: 0 120px 0 48px;
+    border: 2px solid var(--green-400); border-radius: var(--radius-xl);
+    font-family: var(--font); font-size: 15px; color: var(--gray-900);
+    background: #fff; outline: none;
+    box-shadow: 0 4px 20px rgba(46,172,114,0.12);
+  }
+  .search-box-wrap .si { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--green-400); font-size: 18px; }
+  .search-btn {
+    position: absolute; right: 6px; top: 6px;
+    height: 36px; padding: 0 20px;
+    background: var(--green-400); color: #fff; border: none;
+    border-radius: var(--radius-lg); font-family: var(--font); font-size: 13px; font-weight: 600;
+    cursor: pointer;
+  }
+  .quick-tags { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 0.75rem; }
+  .quick-tag {
+    padding: 4px 13px; border-radius: 20px;
+    background: #fff; border: 1px solid var(--gray-200);
+    font-size: 12px; color: var(--gray-600); cursor: pointer;
+    transition: all var(--transition);
+  }
+  .quick-tag:hover { border-color: var(--green-400); color: var(--green-600); }
+
+  .search-layout { display: grid; grid-template-columns: 1fr 260px; gap: 1.25rem; }
+  .result-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .result-card {
+    background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--gray-100);
+    padding: 1.125rem; transition: box-shadow var(--transition); cursor: pointer;
+  }
+  .result-card:hover { box-shadow: var(--shadow-md); }
+  .result-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.75rem; }
+  .result-card-name { font-size: 15px; font-weight: 600; color: var(--gray-900); }
+  .result-card-type { font-size: 11px; color: var(--gray-500); margin-top: 1px; }
+  .result-nums { display: flex; gap: 1rem; margin-top: 0.75rem; }
+  .result-num { text-align: center; }
+  .result-num-val { font-size: 22px; font-weight: 700; color: var(--gray-900); }
+  .result-num-lbl { font-size: 11px; color: var(--gray-500); }
+  .result-num-week { font-size: 22px; font-weight: 700; }
+  .result-num-week.green { color: var(--green-600); }
+  .result-num-week.orange { color: #bf6000; }
+  .result-num-week.red { color: var(--red-600); }
+
+  .outbreak-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .outbreak-tag.active { background: var(--red-50); color: var(--red-600); }
+  .outbreak-tag.monitoring { background: var(--blue-50); color: var(--blue-600); }
+  .outbreak-tag.stable { background: var(--green-50); color: var(--green-600); }
+  .outbreak-tag.high { background: var(--amber-50); color: var(--amber-600); }
+  .outbreak-tag.resolved { background: var(--gray-100); color: var(--gray-600); }
+
+  .sidebar-panel { display: flex; flex-direction: column; gap: 1rem; }
+  .side-card { background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--gray-100); padding: 1rem; }
+  .side-card-title { font-size: 12px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+  .recent-search-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; cursor: pointer; }
+  .recent-search-item:hover .rs-term { color: var(--green-600); }
+  .rs-icon { font-size: 14px; color: var(--gray-400); }
+  .rs-term { font-size: 13px; color: var(--gray-700); flex: 1; }
+  .rs-results { font-size: 11px; color: var(--gray-400); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13px; }
+  .summary-row .sk { color: var(--gray-500); }
+  .summary-row .sv { font-weight: 500; color: var(--gray-800); }
+  .summary-row .sv.highlight { color: var(--red-600); font-weight: 600; }
+  .trending-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; }
+  .ti-rank { width: 18px; font-size: 11px; font-weight: 700; color: var(--gray-400); }
+  .ti-bar-wrap { flex: 1; height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+  .ti-bar { height: 100%; border-radius: 3px; }
+  .ti-val { font-size: 12px; font-weight: 600; color: var(--gray-700); min-width: 24px; text-align: right; }
+
+  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .results-header-left h3 { font-size: 15px; font-weight: 600; color: var(--gray-900); }
+  .results-header-left p { font-size: 12px; color: var(--gray-500); }
+
+  /* ─── STATISTICS ─── */
+  .chart-section { background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--gray-100); padding: 1.25rem; margin-top: 1.25rem; }
+  .chart-title { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+  .chart-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .bar-chart { display: flex; align-items: flex-end; gap: 16px; height: 160px; margin-top: 1.5rem; padding-bottom: 1.5rem; }
+  .bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+  .bar { background: var(--green-400); border-radius: 5px 5px 0 0; width: 100%; transition: background var(--transition); cursor: pointer; }
+  .bar:hover { background: var(--green-600); }
+  .bar-val { font-size: 11px; font-weight: 600; color: var(--gray-700); }
+  .bar-lbl { font-size: 10px; color: var(--gray-500); text-align: center; }
+  .line-chart { height: 150px; margin-top: 1.5rem; position: relative; }
+  .line-chart svg { width: 100%; height: 100%; }
+  .chart-legend { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-600); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; opacity: 0; pointer-events: none;
+    transition: opacity var(--transition);
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: #fff; border-radius: var(--radius-xl);
+    width: 500px; max-width: 96vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    transform: translateY(10px); transition: transform var(--transition);
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 1.25rem 1.5rem 1rem;
+  }
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--gray-100); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--gray-500); font-family: var(--font);
+  }
+  .modal-student-info {
+    display: flex; align-items: center; gap: 12px;
+    padding: 0.75rem 1.5rem 1rem;
+    background: var(--gray-50); margin: 0 1.5rem;
+    border-radius: var(--radius-md); border: 1px solid var(--gray-100);
+  }
+  .modal-body { padding: 1rem 1.5rem; }
+  .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem; }
+  .modal-last-updated { font-size: 11px; color: var(--amber-600); background: var(--amber-50); padding: 8px 12px; border-radius: var(--radius-md); margin-top: 0.75rem; }
+  .modal-record-id { font-size: 11px; color: var(--gray-400); font-family: var(--mono); margin-right: auto; }
+
+  /* ─── TOAST NOTIFICATIONS ─── */
+  .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 200; display: flex; flex-direction: column; gap: 0.5rem; }
+  .toast {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: #fff; border-radius: var(--radius-md);
+    border: 1px solid var(--gray-100); padding: 12px 14px;
+    box-shadow: var(--shadow-md); min-width: 260px;
+    animation: slideIn 0.25s ease;
+  }
+  @keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  .toast-success .toast-dot { background: var(--green-400); }
+  .toast-error .toast-dot { background: var(--red-400); }
+  .toast-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .toast-title { font-size: 13.5px; font-weight: 600; color: var(--gray-900); }
+  .toast-msg { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .toast-close { margin-left: auto; cursor: pointer; color: var(--gray-400); font-size: 16px; background: none; border: none; font-family: var(--font); }
+
+  /* ─── STEP INDICATOR ─── */
+  .step-indicator { display: flex; align-items: center; gap: 0; }
+  .step { display: flex; align-items: center; gap: 6px; }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+  }
+  .step-num.active { background: var(--green-400); color: #fff; }
+  .step-num.inactive { background: var(--gray-100); color: var(--gray-500); }
+  .step-label { font-size: 12px; font-weight: 500; }
+  .step-label.active { color: var(--green-600); }
+  .step-label.inactive { color: var(--gray-400); }
+  .step-connector { width: 30px; height: 1px; background: var(--gray-200); margin: 0 4px; }
+
+  .breadcrumb { display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--gray-500); }
+  .breadcrumb span { cursor: pointer; }
+  .breadcrumb span:hover { color: var(--green-600); }
+  .breadcrumb .current { color: var(--green-600); font-weight: 500; }
+
+  .view-all-link { font-size: 12.5px; color: var(--green-600); font-weight: 500; cursor: pointer; text-decoration: none; }
+  .view-all-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN PAGE ══════════════ -->
+<div id="page-login" class="page active">
+  <div class="login-panel">
+    <div class="login-brand">
+      <div class="login-brand-icon">🏥</div>
+      <div>
+        <div class="login-brand-name">HealthSys</div>
+        <div class="login-brand-sub">Education Division</div>
+      </div>
+    </div>
+    <div class="login-illustration">
+      <div style="width:160px;height:160px;background:rgba(255,255,255,0.12);border-radius:20px;margin:0 auto 1.25rem;display:flex;align-items:center;justify-content:center;font-size:80px;">👩‍⚕️</div>
+      <div class="login-stats">
+        <div class="login-stat"><div class="login-stat-val">98%</div><div class="login-stat-lbl">Uptime</div></div>
+        <div class="login-stat"><div class="login-stat-val">256-bit</div><div class="login-stat-lbl">Encryption</div></div>
+        <div class="login-stat"><div class="login-stat-val">HIPAA</div><div class="login-stat-lbl">Compliant</div></div>
+      </div>
+    </div>
+    <div class="login-tagline">
+      <h2>Comprehensive Health Record Management</h2>
+      <p>Securely access and manage student health records with enterprise-grade privacy protection.</p>
+    </div>
+  </div>
+
+  <div class="login-form-side">
+    <div class="login-form-box">
+      <div class="login-ssl-badge">Secure System · SSL Encrypted</div>
+      <h1>Welcome Back</h1>
+      <p class="subtitle">Sign in to the Student Health Record Management System to continue.</p>
+
+      <div class="form-group">
+        <label>Email or Username</label>
+        <div class="input-wrap">
+          <span class="input-icon">✉</span>
+          <input type="text" placeholder="e.g. john.doe@university.edu">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-row">
+          <label style="margin:0">Password</label>
+          <a class="forgot-link" href="#">Forgot password?</a>
+        </div>
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input type="password" placeholder="Enter your password">
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-600);cursor:pointer;margin-bottom:0.25rem;">
+        <input type="checkbox" checked style="accent-color:var(--green-400);"> Keep me signed in on this device
+      </label>
+
+      <button class="btn-primary" onclick="goTo('dashboard')">🔒 Secure Login →</button>
+      <div class="divider">or continue with</div>
+      <button class="btn-sso">🏛 Sign in with Institution SSO</button>
+
+      <div class="login-badges">
+        <span class="login-badge"><span class="dot"></span> AES-256</span>
+        <span class="login-badge"><span class="dot"></span> 2FA Ready</span>
+        <span class="login-badge"><span class="dot"></span> FERPA Compliant</span>
+        <span class="login-badge"><span class="dot"></span> All Systems Operational</span>
+      </div>
+      <div class="login-contact">Having trouble accessing your account? <a href="#">Contact IT Support</a></div>
+      <div class="login-footer">Student Health Record Management System &nbsp;·&nbsp; v1.0.0 &nbsp;·&nbsp; <a href="#" style="color:var(--gray-400)">Privacy Policy</a> &nbsp;·&nbsp; <a href="#" style="color:var(--gray-400)">Terms of Use</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DASHBOARD ══════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="app-shell">
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">H</div>
+        <div>
+          <div class="sidebar-brand-name">HealthSys</div>
+          <div class="sidebar-brand-sub">Student Health</div>
+        </div>
+      </div>
+      <div class="sidebar-section-label">Main Menu</div>
+      <button class="nav-item active" onclick="goTo('dashboard')">
+        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" onclick="goTo('new-visit')">
+        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+        New Visit
+      </button>
+      <button class="nav-item" onclick="goTo('records')">
+        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M7 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-2M9 3h6v4H9V3z"/></svg>
+        Records
+        <span class="nav-badge">128</span>
+      </button>
+      <button class="nav-item" onclick="goTo('search')">
+        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Search
+      </button>
+      <button class="nav-item" onclick="goTo('statistics')">
+        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        Statistics
+      </button>
+      <div class="sidebar-section-label">Account</div>
+      <button class="nav-item" onclick="showToast('success','Logged out','See you next time!');setTimeout(()=>goTo(\'login\'),1000)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Logout
+      </button>
+      <div class="sidebar-footer"><p>Version 1.0.0 · School Year 2025</p></div>
+    </nav>
+    <div class="main-content">
+      <div class="topbar">
+        <div><div class="topbar-title">Dashboard</div><div class="topbar-sub">Welcome back — here's what's happening today.</div></div>
+        <div class="topbar-right">
+          <div class="topbar-date">📅 Wed, 15 Oct 2025</div>
+          <div class="topbar-notif">🔔<div class="topbar-notif-dot"></div></div>
+          <div class="topbar-user">
+            <div class="topbar-avatar">NS</div>
+            <div><div class="topbar-username">Nurse Sarah</div><div class="topbar-role">School Nurse</div></div>
+            <span style="color:var(--gray-400);margin-left:4px">▾</span>
+          </div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div>
+              <div class="stat-label">Total Students</div>
+              <div class="stat-val">1,240</div>
+              <div class="stat-change">↑ 12 enrolled this month</div>
+            </div>
+            <div class="stat-icon" style="background:#e8f7f0">👥</div>
+          </div>
+          <div class="stat-card">
+            <div>
+              <div class="stat-label">Total Visits</div>
+              <div class="stat-val">85</div>
+              <div class="stat-change" style="color:var(--gray-500)">This week — 117/day avg.</div>
+            </div>
+            <div class="stat-icon" style="background:var(--blue-50)">🩺</div>
+          </div>
+          <div class="stat-card">
+            <div>
+              <div class="stat-label">Common Condition</div>
+              <div class="stat-val" style="font-size:18px">Seasonal Flu</div>
+              <div class="stat-change" style="color:#bf6000">⚠ 54 causes recorded this week</div>
+            </div>
+            <div class="stat-icon" style="background:var(--amber-50)">🌡</div>
+          </div>
+        </div>
+        <div class="two-col" style="align-items:start">
+          <div>
+            <div class="card">
+              <div class="card-header"><div><div class="card-title">Quick Actions</div><div class="card-sub">Common tasks at a glance</div></div></div>
+              <div style="padding:1rem">
+                <div class="quick-grid">
+                  <div class="quick-action" onclick="goTo('new-visit')">
+                    <div class="qa-left">
+                      <div class="qa-icon">📋</div>
+                      <div><div class="qa-title">Record New Visit</div><div class="qa-sub">Log a student health visit</div></div>
+                    </div>
+                    <span class="qa-arrow">›</span>
+                  </div>
+                  <div class="quick-action" onclick="goTo('search')">
+                    <div class="qa-left">
+                      <div class="qa-icon">🔍</div>
+                      <div><div class="qa-title">Search Student</div><div class="qa-sub">Find by name or student ID</div></div>
+                    </div>
+                    <span class="qa-arrow" style="color:var(--gray-400)">›</span>
+                  </div>
+                  <div class="quick-action" onclick="goTo('records')">
+                    <div class="qa-left">
+                      <div class="qa-icon">📁</div>
+                      <div><div class="qa-title">View All Records</div><div class="qa-sub">Browse full health history</div></div>
+                    </div>
+                    <span class="qa-arrow" style="color:var(--gray-400)">›</span>
+                  </div>
+                </div>
+                <div class="followup-banner">✅ 5 students need follow-up today.</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Recent Visits</div><div class="card-sub">Last 5 health visit entries</div></div>
+              <a class="view-all-link" onclick="goTo('records')">View All →</a>
+            </div>
+            <table class="data-table">
+              <thead><tr><th>Student ID</th><th>Name</th><th>Condition</th><th>Status</th><th>Time</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td class="stu-id">STU-8921</td>
+                  <td><div class="student-cell"><div class="avatar-sm" style="background:#e8f7f0;color:var(--green-800)">MC</div>Michael Chen</div></td>
+                  <td><span class="badge badge-gray">Seasonal Flu</span></td>
+                  <td><span class="badge badge-green">Recovered</span></td>
+                  <td style="color:var(--gray-500);font-size:12px">Today, 09:15 AM</td>
+                </tr>
+                <tr>
+                  <td class="stu-id">STU-7432</td>
+                  <td><div class="student-cell"><div class="avatar-sm" style="background:var(--blue-50);color:var(--blue-600)">SJ</div>Sarah Jenkins</div></td>
+                  <td><span class="badge badge-blue">Asthma</span></td>
+                  <td><span class="badge badge-orange">Chronic</span></td>
+                  <td style="color:var(--gray-500);font-size:12px">Today, 08:50 AM</td>
+                </tr>
+                <tr>
+                  <td class="stu-id">STU-9012</td>
+                  <td><div class="student-cell"><div class="avatar-sm" style="background:var(--red-50);color:var(--red-600)">DR</div>David Rodriguez</div></td>
+                  <td><span class="badge badge-red">Allergic Reaction</span></td>
+                  <td><span class="badge badge-red">Emergency</span></td>
+                  <td style="color:var(--gray-500);font-size:12px">Today, 08:22 AM</td>
+                </tr>
+                <tr>
+                  <td class="stu-id">STU-6104</td>
+                  <td><div class="student-cell"><div class="avatar-sm" style="background:var(--amber-50);color:var(--amber-600)">AO</div>Amara Osei</div></td>
+                  <td><span class="badge badge-gray">Headache</span></td>
+                  <td><span class="badge badge-blue">Treatment</span></td>
+                  <td style="color:var(--gray-500);font-size:12px">Yesterday, 3:40 PM</td>
+                </tr>
+                <tr>
+                  <td class="stu-id">STU-5577</td>
+                  <td><div class="student-cell"><div class="avatar-sm" style="background:var(--green-50);color:var(--green-800)">LT</div>Lucas Tan</div></td>
+                  <td><span class="badge badge-gray">Sprained Ankle</span></td>
+                  <td><span class="badge badge-green">Recovered</span></td>
+                  <td style="color:var(--gray-500);font-size:12px">Yesterday, 1:05 PM</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ NEW VISIT ══════════════ -->
+<div id="page-new-visit" class="page">
+  <div class="app-shell">
+    <nav class="sidebar">
+      <div class="sidebar-brand"><div class="sidebar-brand-icon">H</div><div><div class="sidebar-brand-name">HealthSys</div><div class="sidebar-brand-sub">Student Health</div></div></div>
+      <div class="sidebar-section-label">Main Menu</div>
+      <button class="nav-item" onclick="goTo('dashboard')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</button>
+      <button class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>New Visit</button>
+      <button class="nav-item" onclick="goTo('records')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M7 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-2M9 3h6v4H9V3z"/></svg>Records</button>
+      <button class="nav-item" onclick="goTo('search')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Search</button>
+      <button class="nav-item" onclick="goTo('statistics')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Statistics</button>
+      <div class="sidebar-section-label">Account</div>
+      <button class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>Logout</button>
+      <div class="sidebar-footer"><p>Version 1.0.0 · School Year 2025</p></div>
+    </nav>
+    <div class="main-content">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">New Visit</div>
+          <div class="breadcrumb"><span onclick="goTo('dashboard')">Dashboard</span> › <span class="current">New Visit</span></div>
+        </div>
+        <div style="margin-left:0.75rem;display:flex;gap:0.5rem">
+          <span class="badge badge-green">New Visit</span>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-date">📅 Wed, 15 Oct 2025</div>
+          <div class="topbar-notif">🔔<div class="topbar-notif-dot"></div></div>
+          <div class="topbar-user"><div class="topbar-avatar">NS</div><div><div class="topbar-username">Nurse Sarah</div><div class="topbar-role">School Nurse</div></div><span style="color:var(--gray-400);margin-left:4px">▾</span></div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="card">
+          <div class="card-header">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span>📋</span>
+              <div><div class="card-title">Record New Visit</div><div class="card-sub">Fill in the form below to log a new student health visit.</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75rem">
+              <div class="step-indicator">
+                <div class="step"><div class="step-num active">1</div><div class="step-label active">Student Info</div></div>
+                <div class="step-connector"></div>
+                <div class="step"><div class="step-num inactive">2</div><div class="step-label inactive">Condition</div></div>
+                <div class="step-connector"></div>
+                <div class="step"><div class="step-num inactive">3</div><div class="step-label inactive">Treatment</div></div>
+              </div>
+              <span class="draft-badge">Draft — Unsaved</span>
+            </div>
+          </div>
+
+          <div class="form-section-title">🏫 Visit Information Form</div>
+
+          <div class="form-section-title" style="background:var(--gray-50);border-left:3px solid var(--green-400)">Student Information</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Student ID <span class="req">*</span></label>
+              <input type="text" placeholder="STU-2026001" value="STU-2026001">
+              <div class="field-hint">Format: STU-XXXXXXX</div>
+            </div>
+            <div class="form-field">
+              <label>Full Name <span class="req">*</span></label>
+              <input type="text" placeholder="Enter student's full name">
+              <div class="field-hint">As registered in school records</div>
+            </div>
+            <div class="form-field">
+              <label>Age <span class="req">*</span></label>
+              <input type="number" placeholder="e.g. 14">
+              <div class="field-hint" style="color:var(--amber-600)">⚠ Must be between 5–25 years old</div>
+            </div>
+            <div class="form-field">
+              <label>Visit Date <span class="req">*</span></label>
+              <input type="date" value="2025-10-15">
+              <div class="field-hint">Defaults to today's date</div>
+            </div>
+          </div>
+
+          <div class="form-section-title" style="background:var(--gray-50);border-left:3px solid var(--green-400)">Medical Details</div>
+          <div class="form-grid">
+            <div class="form-field form-full">
+              <label>Disease / Condition <span class="req">*</span></label>
+              <select><option>Select or search a condition…</option><option>Seasonal Flu</option><option>Asthma</option><option>Allergic Reaction</option><option>Headache</option><option>Sprained Ankle</option><option>Dengue Fever</option><option>Hypertension</option></select>
+              <div class="field-hint">Select the primary condition observed during the visit</div>
+            </div>
+            <div class="form-field form-full">
+              <label>Severity Level</label>
+              <div class="severity-btns">
+                <button class="severity-btn active-mild" onclick="setSeverity(this,'mild')">● Mild</button>
+                <button class="severity-btn" onclick="setSeverity(this,'moderate')">● Moderate</button>
+                <button class="severity-btn" onclick="setSeverity(this,'severe')">⚠ Severe</button>
+                <button class="severity-btn" onclick="setSeverity(this,'emergency')">🚨 Emergency</button>
+              </div>
+            </div>
+            <div class="form-field form-full">
+              <label>Treatment / Prescription <span class="req">*</span></label>
+              <textarea placeholder="Describe the treatment provided, medications prescribed, dosage, and any special instructions for the student or parent/guardian…"></textarea>
+              <div style="display:flex;justify-content:space-between"><div class="field-hint">Include medications, dosage, and follow-up instructions</div><div class="field-hint">0/500</div></div>
+            </div>
+          </div>
+
+          <div class="form-section-title" style="background:var(--gray-50);border-left:3px solid var(--green-400)">Additional Notes <span style="font-size:10px;font-weight:400;color:var(--gray-400)">Optional</span></div>
+          <div class="form-grid">
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">📞 Parent / Guardian Notified</div>
+                <div class="toggle-sub">Was the parent or guardian notified?</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">📅 Follow-Up Required</div>
+                <div class="toggle-sub">Does the student need follow-up?</div>
+              </div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+
+          <div class="required-note">✅ Fields marked with * are required. Ensure all information is accurate before saving the record.</div>
+          <div style="padding:0 1.25rem;font-size:11px;color:var(--gray-400);margin-bottom:0.5rem">🕐 Auto saved as draft 2 min ago</div>
+
+          <div class="form-footer">
+            <button class="btn btn-outline" onclick="goTo('dashboard')">✕ Cancel</button>
+            <button class="btn btn-outline">💾 Save Draft</button>
+            <button class="btn btn-green" onclick="showToast('success','Record Saved','Visit has been recorded successfully.');goTo('dashboard')">✅ Save Record</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ RECORDS ══════════════ -->
+<div id="page-records" class="page">
+  <div class="app-shell">
+    <nav class="sidebar">
+      <div class="sidebar-brand"><div class="sidebar-brand-icon">H</div><div><div class="sidebar-brand-name">HealthSys</div><div class="sidebar-brand-sub">Student Health</div></div></div>
+      <div class="sidebar-section-label">Main Menu</div>
+      <button class="nav-item" onclick="goTo('dashboard')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</button>
+      <button class="nav-item" onclick="goTo('new-visit')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>New Visit</button>
+      <button class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M7 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-2M9 3h6v4H9V3z"/></svg>Records<span class="nav-badge">128</span></button>
+      <button class="nav-item" onclick="goTo('search')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Search</button>
+      <button class="nav-item" onclick="goTo('statistics')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Statistics</button>
+      <div class="sidebar-section-label">Account</div>
+      <button class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>Logout</button>
+      <div class="sidebar-footer"><p>Version 1.0.0 · School Year 2025</p></div>
+    </nav>
+    <div class="main-content">
+      <div class="topbar">
+        <div><div class="topbar-title">All Records</div><div class="topbar-sub">Browse and manage complete student health records.</div></div>
+        <div class="topbar-right">
+          <div class="topbar-date">📅 Wed, 15 Oct 2025</div>
+          <div class="topbar-notif">🔔<div class="topbar-notif-dot"></div></div>
+          <div class="topbar-user"><div class="topbar-avatar">NS</div><div><div class="topbar-username">Nurse Sarah</div><div class="topbar-role">School Nurse</div></div><span style="color:var(--gray-400);margin-left:4px">▾</span></div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="card">
+          <div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gray-100)">
+            <div><div class="card-title">Student Health Records</div><div class="card-sub">Showing 128 total records — Page 1 of 13</div></div>
+            <button class="btn btn-outline btn-sm">⬆ Export</button>
+          </div>
+          <div class="filter-row">
+            <div class="search-input-wrap" style="max-width:220px">
+              <span class="si">🔍</span>
+              <input type="text" placeholder="Michael" value="Michael">
+            </div>
+            <select class="filter-select"><option>All Diseases</option><option>Seasonal Flu</option><option>Asthma</option><option>Allergic Reaction</option><option>Dengue Fever</option></select>
+            <select class="filter-select"><option>All Time</option><option>Today</option><option>This Week</option><option>This Month</option></select>
+            <div class="active-filter-badge">✓ 1 Active Filter</div>
+            <div class="result-count">10 of 128 results</div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Student ID ↑</th><th>Name ↑</th><th>Age ↓</th><th>Disease ↑</th><th>Treatment</th><th>Date ↑</th><th>Actions</th></tr></thead>
+            <tbody id="records-tbody">
+            </tbody>
+          </table>
+          <div class="pagination">
+            <span>Showing <b>1–10</b> of 128 records</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button class="btn btn-outline btn-sm">‹ Prev</button>
+              <div class="page-nums">
+                <div class="page-num active">1</div>
+                <div class="page-num">2</div>
+                <div class="page-num">3</div>
+                <div class="page-num" style="pointer-events:none;border:none;color:var(--gray-400)">…</div>
+                <div class="page-num">12</div>
+                <div class="page-num">13</div>
+              </div>
+              <button class="btn btn-outline btn-sm">Next ›</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-500)">Rows per page: <select class="filter-select" style="height:28px;font-size:12px"><option>10</option><option>25</option><option>50</option></select></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SEARCH ══════════════ -->
+<div id="page-search" class="page">
+  <div class="app-shell">
+    <nav class="sidebar">
+      <div class="sidebar-brand"><div class="sidebar-brand-icon">H</div><div><div class="sidebar-brand-name">HealthSys</div><div class="sidebar-brand-sub">Student Health</div></div></div>
+      <div class="sidebar-section-label">Main Menu</div>
+      <button class="nav-item" onclick="goTo('dashboard')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</button>
+      <button class="nav-item" onclick="goTo('new-visit')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>New Visit</button>
+      <button class="nav-item" onclick="goTo('records')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M7 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-2M9 3h6v4H9V3z"/></svg>Records</button>
+      <button class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Search</button>
+      <button class="nav-item" onclick="goTo('statistics')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Statistics</button>
+      <div class="sidebar-section-label">Account</div>
+      <button class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>Logout</button>
+      <div class="sidebar-footer"><p>Version 1.0.0 · School Year 2025</p></div>
+    </nav>
+    <div class="main-content">
+      <div class="topbar">
+        <div><div class="topbar-title">Search</div><div class="topbar-sub">Find diseases, conditions, and student health records.</div></div>
+        <div class="topbar-right">
+          <div class="topbar-date">📅 Wed, 15 Oct 2025</div>
+          <div class="topbar-notif">🔔<div class="topbar-notif-dot"></div></div>
+          <div class="topbar-user"><div class="topbar-avatar">NS</div><div><div class="topbar-username">Nurse Sarah</div><div class="topbar-role">School Nurse</div></div><span style="color:var(--gray-400);margin-left:4px">▾</span></div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="search-hero">
+          <h2>Search Health Records</h2>
+          <p>Search across all diseases, conditions, and diagnoses in the system</p>
+          <div class="search-box-wrap">
+            <span class="si">🔍</span>
+            <input type="text" value="Flu">
+            <button class="search-btn">Search</button>
+          </div>
+          <div class="quick-tags">
+            <span class="quick-tag">Asthma</span>
+            <span class="quick-tag">Dengue</span>
+            <span class="quick-tag">Hypertension</span>
+            <span class="quick-tag">Allergies</span>
+            <span class="quick-tag">Headache</span>
+          </div>
+        </div>
+
+        <div class="search-layout">
+          <div>
+            <div class="results-header">
+              <div class="results-header-left">
+                <h3>Search Results</h3>
+                <p style="color:var(--green-600);font-size:12px">✅ Showing results for "Flu" — 6 conditions found</p>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:12px;color:var(--gray-500)">Sort by:</span>
+                <select class="filter-select" style="height:32px">
+                  <option>Most Cases</option>
+                  <option>Most Recent</option>
+                  <option>Alphabetical</option>
+                </select>
+              </div>
+            </div>
+            <div class="result-cards">
+              <div class="result-card">
+                <div class="result-card-top">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="font-size:20px">🌡</span>
+                    <div><div class="result-card-name">Seasonal <u>Flu</u></div><div class="result-card-type">Influenza B · Respiratory</div></div>
+                  </div>
+                  <span class="outbreak-tag active">Active Outbreak</span>
+                </div>
+                <div class="result-nums">
+                  <div class="result-num"><div class="result-num-val">34</div><div class="result-num-lbl">Total Cases</div></div>
+                  <div class="result-num"><div class="result-num-week red">12</div><div class="result-num-lbl">This Week</div></div>
+                </div>
+                <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end">
+                  <span style="font-size:12px;color:var(--green-600);font-weight:500;cursor:pointer">View Records →</span>
+                </div>
+              </div>
+              <div class="result-card">
+                <div class="result-card-top">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="font-size:20px">🦠</span>
+                    <div><div class="result-card-name">Influenza A (<u>Flu</u> Type A)</div><div class="result-card-type">Viral · Respiratory</div></div>
+                  </div>
+                  <span class="outbreak-tag monitoring">Monitoring</span>
+                </div>
+                <div class="result-nums">
+                  <div class="result-num"><div class="result-num-val">18</div><div class="result-num-lbl">Total Cases</div></div>
+                  <div class="result-num"><div class="result-num-week orange">5</div><div class="result-num-lbl">This Week</div></div>
+                </div>
+                <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end">
+                  <span style="font-size:12px;color:var(--green-600);font-weight:500;cursor:pointer">View Records →</span>
+                </div>
+              </div>
+              <div class="result-card">
+                <div class="result-card-top">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="font-size:20px">🤒</span>
+                    <div><div class="result-card-name"><u>Flu</u>-like Illness (ILI)</div><div class="result-card-type">Symptomatic · Unspecified</div></div>
+                  </div>
+                  <span class="outbreak-tag high">High Incidence</span>
+                </div>
+                <div class="result-nums">
+                  <div class="result-num"><div class="result-num-val">27</div><div class="result-num-lbl">Total Cases</div></div>
+                  <div class="result-num"><div class="result-num-week orange">9</div><div class="result-num-lbl">This Week</div></div>
+                </div>
+                <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end">
+                  <span style="font-size:12px;color:var(--green-600);font-weight:500;cursor:pointer">View Records →</span>
+                </div>
+              </div>
+              <div class="result-card">
+                <div class="result-card-top">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="font-size:20px">🤢</span>
+                    <div><div class="result-card-name">Stomach <u>Flu</u> (Gastroenteritis)</div><div class="result-card-type">Viral · Gastrointestinal</div></div>
+                  </div>
+                  <span class="outbreak-tag stable">Stable</span>
+                </div>
+                <div class="result-nums">
+                  <div class="result-num"><div class="result-num-val">11</div><div class="result-num-lbl">Total Cases</div></div>
+                  <div class="result-num"><div class="result-num-week green">3</div><div class="result-num-lbl">This Week</div></div>
+                </div>
+                <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end">
+                  <span style="font-size:12px;color:var(--green-600);font-weight:500;cursor:pointer">View Records →</span>
+                </div>
+              </div>
+              <div class="result-card">
+                <div class="result-card-top">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="font-size:20px">🐦</span>
+                    <div><div class="result-card-name">Avian <u>Flu</u> (H5N1)</div><div class="result-card-type">Avian Influenza · Rare</div></div>
+                  </div>
+                  <span class="outbreak-tag resolved">Resolved</span>
+                </div>
+                <div class="result-nums">
+                  <div class="result-num"><div class="result-num-val">2</div><div class="result-num-lbl">Total Cases</div></div>
+                  <div class="result-num"><div class="result-num-week green">0</div><div class="result-num-lbl">This Week</div></div>
+                </div>
+                <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end">
+                  <span style="font-size:12px;color:var(--green-600);font-weight:500;cursor:pointer">View Records →</span>
+                </div>
+              </div>
+              <div class="result-card">
+                <div class="result-card-top">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="font-size:20px">🐷</span>
+                    <div><div class="result-card-name">Swine <u>Flu</u> (H1N1)</div><div class="result-card-type">Viral · Pandemic Type</div></div>
+                  </div>
+                  <span class="outbreak-tag stable">Stable</span>
+                </div>
+                <div class="result-nums">
+                  <div class="result-num"><div class="result-num-val">6</div><div class="result-num-lbl">Total Cases</div></div>
+                  <div class="result-num"><div class="result-num-week green">1</div><div class="result-num-lbl">This Week</div></div>
+                </div>
+                <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end">
+                  <span style="font-size:12px;color:var(--green-600);font-weight:500;cursor:pointer">View Records →</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sidebar-panel">
+            <div class="side-card">
+              <div class="side-card-title">Recent Searches <span style="float:right;color:var(--green-600);cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0">Clear All</span></div>
+              <div class="recent-search-item"><span class="rs-icon">🕐</span><span class="rs-term">Flu</span><span class="rs-results">6 results</span></div>
+              <div class="recent-search-item"><span class="rs-icon">🕐</span><span class="rs-term">Asthma</span><span class="rs-results">3 results</span></div>
+              <div class="recent-search-item"><span class="rs-icon">🕐</span><span class="rs-term">Dengue Fever</span><span class="rs-results">1 result</span></div>
+              <div class="recent-search-item"><span class="rs-icon">🕐</span><span class="rs-term">Hypertension</span><span class="rs-results">2 results</span></div>
+              <div class="recent-search-item"><span class="rs-icon">🕐</span><span class="rs-term">Allergic Reaction</span><span class="rs-results">4 results</span></div>
+            </div>
+            <div class="side-card">
+              <div class="side-card-title">Result Summary</div>
+              <div class="summary-row"><span class="sk">Total Conditions Found</span><span class="sv">6</span></div>
+              <div class="summary-row"><span class="sk">Total Cases (All)</span><span class="sv">98</span></div>
+              <div class="summary-row"><span class="sk">Active This Week</span><span class="sv highlight">30</span></div>
+              <div class="summary-row"><span class="sk">Outbreak Alerts</span><span class="sv"><span class="badge badge-red" style="font-size:10px">1 Active</span></span></div>
+              <div class="summary-row"><span class="sk">Most Affected Grade</span><span class="sv">Grade 7</span></div>
+            </div>
+            <div class="side-card">
+              <div class="side-card-title">Trending Conditions</div>
+              <div class="trending-item"><span class="ti-rank">1</span><div style="flex:1"><div style="font-size:12px;margin-bottom:3px">Seasonal Flu</div><div class="ti-bar-wrap"><div class="ti-bar" style="width:100%;background:var(--green-400)"></div></div></div><span class="ti-val">34</span></div>
+              <div class="trending-item"><span class="ti-rank">2</span><div style="flex:1"><div style="font-size:12px;margin-bottom:3px">Flu-like Illness</div><div class="ti-bar-wrap"><div class="ti-bar" style="width:79%;background:var(--amber-400)"></div></div></div><span class="ti-val">27</span></div>
+              <div class="trending-item"><span class="ti-rank">3</span><div style="flex:1"><div style="font-size:12px;margin-bottom:3px">Influenza A</div><div class="ti-bar-wrap"><div class="ti-bar" style="width:53%;background:var(--blue-400)"></div></div></div><span class="ti-val">18</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ STATISTICS ══════════════ -->
+<div id="page-statistics" class="page">
+  <div class="app-shell">
+    <nav class="sidebar">
+      <div class="sidebar-brand"><div class="sidebar-brand-icon">H</div><div><div class="sidebar-brand-name">HealthSys</div><div class="sidebar-brand-sub">Student Health</div></div></div>
+      <div class="sidebar-section-label">Main Menu</div>
+      <button class="nav-item" onclick="goTo('dashboard')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</button>
+      <button class="nav-item" onclick="goTo('new-visit')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>New Visit</button>
+      <button class="nav-item" onclick="goTo('records')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M7 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-2M9 3h6v4H9V3z"/></svg>Records</button>
+      <button class="nav-item" onclick="goTo('search')"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Search</button>
+      <button class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Statistics</button>
+      <div class="sidebar-section-label">Account</div>
+      <button class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>Logout</button>
+      <div class="sidebar-footer"><p>Version 1.0.0 · School Year 2025</p></div>
+    </nav>
+    <div class="main-content">
+      <div class="topbar">
+        <div><div class="topbar-title">Statistics</div><div class="topbar-sub">Health analytics overview — School Year 2025</div></div>
+        <div class="topbar-right">
+          <select class="filter-select">
+            <option>May – Oct 2025</option><option>Jan – Apr 2025</option><option>Full Year 2025</option>
+          </select>
+          <button class="btn btn-outline btn-sm">⬆ Export Report</button>
+          <div class="topbar-notif">🔔<div class="topbar-notif-dot"></div></div>
+          <div class="topbar-user"><div class="topbar-avatar">NS</div><div><div class="topbar-username">Nurse Sarah</div><div class="topbar-role">School Nurse</div></div><span style="color:var(--gray-400);margin-left:4px">▾</span></div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div>
+              <div class="stat-label">Total Cases</div>
+              <div class="stat-val">342</div>
+              <div class="stat-change">↑ 38 cases this month</div>
+            </div>
+            <div class="stat-icon" style="background:#e8f7f0">🧾</div>
+          </div>
+          <div class="stat-card">
+            <div>
+              <div class="stat-label">Most Common Disease</div>
+              <div class="stat-val" style="font-size:20px">Seasonal Flu</div>
+              <div class="stat-change" style="color:#bf6000">⚠ 45 recorded cases total</div>
+            </div>
+            <div class="stat-icon" style="background:var(--amber-50)">🌡</div>
+          </div>
+          <div class="stat-card">
+            <div>
+              <div class="stat-label">Avg. Daily Visits</div>
+              <div class="stat-val">18.4</div>
+              <div class="stat-change" style="color:var(--gray-500)">Based on last 6 months</div>
+            </div>
+            <div class="stat-icon" style="background:var(--blue-50)">📊</div>
+          </div>
+        </div>
+
+        <div class="chart-section">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between">
+            <div>
+              <div class="chart-title">Cases per Disease</div>
+              <div class="chart-sub">Total recorded cases grouped by diagnosis — School Year 2025</div>
+            </div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green-400)"></div>Number of Cases</div>
+          </div>
+          <div class="bar-chart">
+            <div class="bar-wrap"><div class="bar-val">45</div><div class="bar" style="height:100%"></div><div class="bar-lbl">Seasonal Flu</div></div>
+            <div class="bar-wrap"><div class="bar-val">30</div><div class="bar" style="height:67%"></div><div class="bar-lbl">Common Cold</div></div>
+            <div class="bar-wrap"><div class="bar-val">20</div><div class="bar" style="height:44%"></div><div class="bar-lbl">Measles</div></div>
+            <div class="bar-wrap"><div class="bar-val">17</div><div class="bar" style="height:38%"></div><div class="bar-lbl">Headache</div></div>
+            <div class="bar-wrap"><div class="bar-val">14</div><div class="bar" style="height:31%"></div><div class="bar-lbl">Stomach Ache</div></div>
+            <div class="bar-wrap"><div class="bar-val">11</div><div class="bar" style="height:24%"></div><div class="bar-lbl">Asthma</div></div>
+            <div class="bar-wrap"><div class="bar-val">9</div><div class="bar" style="height:20%"></div><div class="bar-lbl">Sprained Ankle</div></div>
+            <div class="bar-wrap"><div class="bar-val">7</div><div class="bar" style="height:16%"></div><div class="bar-lbl">Eye Infection</div></div>
+          </div>
+        </div>
+
+        <div class="chart-section">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between">
+            <div>
+              <div class="chart-title">Visits Over Time</div>
+              <div class="chart-sub">Monthly visit count trend for the last 6 months</div>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--green-400)"></div>Total Visits</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--blue-400)"></div>Avg. Baseline</div>
+              <div style="font-size:12px;color:var(--gray-500)">📅 May – Oct 2025</div>
+            </div>
+          </div>
+          <div class="line-chart">
+            <svg viewBox="0 0 700 140" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="lg1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#2eac72" stop-opacity="0.18"/>
+                  <stop offset="100%" stop-color="#2eac72" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0,100 C80,95 140,90 200,80 C260,70 300,60 360,45 C420,30 480,25 540,20 C600,15 650,18 700,15" fill="url(#lg1)" stroke="none"/>
+              <path d="M0,100 C80,95 140,90 200,80 C260,70 300,60 360,45 C420,30 480,25 540,20 C600,15 650,18 700,15" fill="none" stroke="#2eac72" stroke-width="2.5"/>
+              <path d="M0,85 C140,82 280,80 420,80 C560,80 630,80 700,80" fill="none" stroke="#378add" stroke-width="1.5" stroke-dasharray="6 4"/>
+              <text x="0" y="130" font-size="11" fill="#adb5bd">May 2025</text>
+              <text x="110" y="130" font-size="11" fill="#adb5bd">Jun 2025</text>
+              <text x="220" y="130" font-size="11" fill="#adb5bd">Jul 2025</text>
+              <text x="340" y="130" font-size="11" fill="#adb5bd">Aug 2025</text>
+              <text x="460" y="130" font-size="11" fill="#adb5bd">Sep 2025</text>
+              <text x="580" y="130" font-size="11" fill="#adb5bd">Oct 2025</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODAL (Edit Record) ══════════════ -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;background:var(--green-50);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:18px">✏️</div>
+        <div>
+          <div style="font-size:16px;font-weight:600;color:var(--gray-900)">Update Student Record</div>
+          <div style="font-size:12px;color:var(--gray-500)">Editing health record entry</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-student-info">
+      <div class="avatar-sm" style="width:40px;height:40px;background:#e8f7f0;color:var(--green-800);font-size:14px">JD</div>
+      <div style="flex:1">
+        <div style="font-weight:600;color:var(--gray-900)">John Doe</div>
+        <div style="font-size:12px;color:var(--gray-500)">Grade 10 · Section A · Age 18</div>
+      </div>
+      <span style="font-size:11px;font-family:var(--mono);background:var(--green-50);color:var(--green-600);padding:3px 9px;border-radius:20px">STU-2026001</span>
+    </div>
+    <div class="modal-body">
+      <div class="form-field" style="margin-bottom:1rem">
+        <label>Disease / Condition <span class="req">*</span></label>
+        <input type="text" value="Seasonal Flu" style="border-color:var(--green-400)">
+        <div class="field-hint">Enter the diagnosed condition or illness name</div>
+      </div>
+      <div class="form-field" style="margin-bottom:1rem">
+        <label>Treatment / Prescription <span class="req">*</span></label>
+        <textarea style="height:70px">Rest and hydration, Paracetamol 500mg</textarea>
+        <div class="field-hint">Describe the treatment plan or medications prescribed.</div>
+      </div>
+      <div class="form-field">
+        <label>Visit Date <span class="req">*</span></label>
+        <input type="date" value="2023-10-24">
+        <div class="field-hint">Date of the student's health office visit.</div>
+      </div>
+      <div class="modal-last-updated">🕐 Last updated on Oct 24, 2023 at 9:42 AM by Nurse Sarah</div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-record-id">Record ID: #REC-00412</span>
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">✕ Cancel</button>
+      <button class="btn btn-green btn-sm" onclick="showToast('success','Record Updated','Changes have been saved.');closeModal()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TOASTS ══════════════ -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+const pages = ['login','dashboard','new-visit','records','search','statistics'];
+
+function goTo(id) {
+  pages.forEach(p => {
+    const el = document.getElementById('page-' + p);
+    if (el) el.classList.remove('active');
+  });
+  const target = document.getElementById('page-' + id);
+  if (target) {
+    target.classList.add('active');
+    window.scrollTo(0,0);
+  }
+  if (id === 'records') buildRecordsTable();
+}
+
+function showToast(type, title, msg) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<div class="toast-dot"></div><div><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div><button class="toast-close" onclick="this.parentNode.remove()">✕</button>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+function openModal() {
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+}
+
+function setSeverity(btn, level) {
+  btn.closest('.severity-btns').querySelectorAll('.severity-btn').forEach(b => {
+    b.className = 'severity-btn';
+  });
+  btn.classList.add('active-' + level);
+}
+
+const recordsData = [
+  {id:'STU-8921', name:'Michael Chen', initials:'MC', age:18, disease:'Seasonal Flu', dc:'gray', treatment:'Tamiflu 75mg, Rest', date:'Oct 15, 2025'},
+  {id:'STU-7432', name:'Sarah Jenkins', initials:'SJ', age:17, disease:'Asthma', dc:'blue', treatment:'Salbutamol Inhaler', date:'Oct 15, 2025'},
+  {id:'STU-9012', name:'David Rodriguez', initials:'DR', age:15, disease:'Allergic Reaction', dc:'red', treatment:'Epinephrine, Benadryl', date:'Oct 14, 2025'},
+  {id:'STU-6104', name:'Amara Osei', initials:'AO', age:18, disease:'Migraine', dc:'gray', treatment:'Ibuprofen 400mg, Dark room rest', date:'Oct 14, 2025'},
+  {id:'STU-5577', name:'Lucas Tan', initials:'LT', age:16, disease:'Sprained Ankle', dc:'orange', treatment:'RICE Therapy, Pain relief', date:'Oct 13, 2025'},
+  {id:'STU-4398', name:'Priya Sharma', initials:'PS', age:17, disease:'Dengue Fever', dc:'orange', treatment:'IV Fluids, Paracetamol', date:'Oct 12, 2025'},
+  {id:'STU-3621', name:'James Okafor', initials:'JO', age:15, disease:'Hypertension', dc:'blue', treatment:'Amlodipine 5mg, Monitor BP', date:'Oct 11, 2025'},
+  {id:'STU-2856', name:'Elena Vasquez', initials:'EV', age:18, disease:'Conjunctivitis', dc:'gray', treatment:'Antibiotic Eye Drops', date:'Oct 10, 2025'},
+  {id:'STU-1742', name:'Nathan Park', initials:'NP', age:18, disease:'Seasonal Flu', dc:'gray', treatment:'Oseltamivir, Vitamin C', date:'Oct 09, 2025'},
+  {id:'STU-0583', name:'Fatima Al-Hassan', initials:'FA', age:14, disease:'Gastroenteritis', dc:'gray', treatment:'ORS, Metronidazole 250mg', date:'Oct 08, 2025'},
+];
+
+const avatarColors = {
+  'MC':'#e8f7f0,#0e4a30', 'SJ':'#e6f1fb,#185fa5', 'DR':'#fff0f0,#a32d2d',
+  'AO':'#faeeda,#854f0b', 'LT':'#e8f7f0,#0e4a30', 'PS':'#e1f5ee,#0f6e56',
+  'JO':'#e6f1fb,#185fa5', 'EV':'#fbeaf0,#4b1528', 'NP':'#eaf3de,#3b6d11', 'FA':'#faeeda,#854f0b'
+};
+
+function buildRecordsTable() {
+  const tbody = document.getElementById('records-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = recordsData.map(r => {
+    const [bg,fg] = (avatarColors[r.initials]||'#f1f3f5,#495057').split(',');
+    const dc = r.dc;
+    return `<tr>
+      <td class="stu-id">${r.id}</td>
+      <td><div class="student-cell"><div class="avatar-sm" style="background:${bg};color:${fg}">${r.initials}</div>${r.name}</div></td>
+      <td>${r.age}</td>
+      <td><span class="badge badge-${dc}">${r.disease}</span></td>
+      <td style="color:var(--gray-600);font-size:13px">${r.treatment}</td>
+      <td style="color:var(--gray-500);font-size:12px">${r.date}</td>
+      <td>
+        <div style="display:flex;gap:5px">
+          <button class="action-btn" title="View">👁</button>
+          <button class="action-btn" title="Edit" onclick="openModal()">✏️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// Show toasts from image 8
+setTimeout(() => {
+  if(document.getElementById('page-dashboard').classList.contains('active')) {
+    showToast('success','Record Saved','Record saved successfully!');
+    setTimeout(()=>showToast('error','Error','Student ID not found.'), 500);
+  }
+}, 500);
+</script>
+</body>
+</html>
