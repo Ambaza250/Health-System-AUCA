@@ -819,7 +819,13 @@
         <input type="checkbox" checked style="accent-color:var(--green-400);"> Keep me signed in on this device
       </label>
 
-      <button class="btn-primary" onclick="goTo('dashboard')">🔒 Secure Login →</button>
+      <button class="btn-primary" onclick="
+  const email = document.querySelector('input[type=text]').value;
+  const pass  = document.querySelector('input[type=password]').value;
+  handleLogin(email, pass)
+">
+  🔒 Secure Login →
+</button>
       <div class="divider">or continue with</div>
       <button class="btn-sso">🏛 Sign in with Institution SSO</button>
 
