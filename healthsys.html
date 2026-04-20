@@ -1636,5 +1636,117 @@ setTimeout(() => {
   }
 }, 500);
 </script>
+
+<!-- Supabase client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://bnrxqykterikhqsojbmo.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_a1ugArTuX4kJH8mJJXw3ZA_bidO11RA';
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ─── AUTH: Login ────────────────────────────────────────────────
+  async function handleLogin(email, password) {
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) { showToast('error', 'Login Failed', error.message); return; }
+    showToast('success', 'Welcome back!', data.user.email);
+    goTo('dashboard');
+    loadDashboard();
+  }
+
+  // ─── DASHBOARD: Load stats ──────────────────────────────────────
+  async function loadDashboard() {
+    const [{ count: studentCount }, { count: visitCount }, { data: recentVisits }] = await Promise.all([
+      db.from('students').select('*', { count: 'exact', head: true }),
+      db.from('visits').select('*', { count: 'exact', head: true }),
+      db.from('visits')
+        .select('*, students(student_id, full_name), conditions(name)')
+        .order('visit_date', { ascending: false })
+        .limit(5)
+    ]);
+    // Update your stat cards and recent visits table with these values
+    console.log({ studentCount, visitCount, recentVisits });
+  }
+
+  // ─── NEW VISIT: Save ────────────────────────────────────────────
+  async function saveVisit({ studentId, conditionId, severity, treatment, visitDate, parentNotified, followUpRequired }) {
+    const user = (await db.auth.getUser()).data.user;
+    const recordNumber = 'REC-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0');
+
+    const { data, error } = await db.from('visits').insert({
+      record_number: recordNumber,
+      student_id: studentId,
+      condition_id: conditionId,
+      severity,
+      treatment,
+      visit_date: visitDate,
+      parent_notified: parentNotified,
+      follow_up_required: followUpRequired,
+      recorded_by: user.id,
+      last_updated_by: user.id
+    });
+
+    if (error) { showToast('error', 'Save Failed', error.message); return; }
+    showToast('success', 'Record Saved', 'Visit has been recorded successfully.');
+    goTo('dashboard');
+  }
+
+  // ─── RECORDS: Load all ──────────────────────────────────────────
+  async function loadRecords(searchTerm = '', disease = '', timeRange = '') {
+    let query = db.from('visits')
+      .select('*, students(student_id, full_name, age), conditions(name)')
+      .order('visit_date', { ascending: false });
+
+    if (searchTerm) query = query.ilike('students.full_name', `%${searchTerm}%`);
+    if (disease) query = query.eq('conditions.name', disease);
+
+    const { data, error } = await query.limit(10);
+    if (error) { showToast('error', 'Load Failed', error.message); return; }
+    return data;
+  }
+
+  // ─── RECORDS: Update ────────────────────────────────────────────
+  async function updateVisit(visitId, { conditionName, treatment, visitDate }) {
+    const user = (await db.auth.getUser()).data.user;
+    const { error } = await db.from('visits').update({
+      treatment,
+      visit_date: visitDate,
+      last_updated_by: user.id
+    }).eq('id', visitId);
+
+    if (error) { showToast('error', 'Update Failed', error.message); return; }
+    showToast('success', 'Record Updated', 'Changes have been saved.');
+    closeModal();
+  }
+
+  // ─── SEARCH: Find conditions ────────────────────────────────────
+  async function searchConditions(term) {
+    const { data, error } = await db.from('conditions')
+      .select('*, visits(count)')
+      .ilike('name', `%${term}%`);
+
+    if (error) { showToast('error', 'Search Failed', error.message); return; }
+    return data;
+  }
+
+  // ─── STATISTICS: Aggregate data ─────────────────────────────────
+  async function loadStatistics() {
+    const { data, error } = await db.from('visits')
+      .select('conditions(name), visit_date, severity')
+      .order('visit_date');
+
+    if (error) { showToast('error', 'Stats Failed', error.message); return; }
+    // Process data into chart-ready format
+    return data;
+  }
+
+  // ─── AUTH: Logout ───────────────────────────────────────────────
+  async function handleLogout() {
+    await db.auth.signOut();
+    goTo('login');
+  }
+</script>
+ 
 </body>
 </html>
