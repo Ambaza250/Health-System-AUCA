@@ -6,11 +6,14 @@
     <title>HealthSys - New Visit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap'); body{font-family:'Inter',system-ui;}</style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', system-ui; }
+    </style>
 </head>
 <body class="bg-slate-50">
     <div class="flex h-screen overflow-hidden">
-        <!-- SIDEBAR (same as dashboard) -->
+        <!-- SIDEBAR -->
         <div class="w-64 bg-white border-r flex flex-col">
             <div class="p-6 border-b flex items-center gap-3">
                 <div class="w-9 h-9 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-2xl">🏥</div>
@@ -28,16 +31,15 @@
             </div>
         </div>
 
-        <!-- MAIN -->
+        <!-- MAIN CONTENT -->
         <div class="flex-1 flex flex-col">
             <div class="h-16 bg-white border-b px-8 flex items-center justify-between">
                 <h1 class="text-2xl font-semibold">New Visit</h1>
-                <div class="flex items-center gap-8">
-                    <div id="current-date" class="font-medium"></div>
+                <div class="flex items-center gap-6">
                     <div class="flex items-center gap-3">
                         <div class="text-right">
                             <div class="font-semibold" id="user-name">Nurse Sarah</div>
-                            <div class="text-xs text-gray-500">School Nurse</div>
+                            <div class="text-xs text-gray-500" id="user-role">School Nurse</div>
                         </div>
                         <div class="w-9 h-9 bg-emerald-100 rounded-2xl flex items-center justify-center text-2xl">👩‍⚕️</div>
                     </div>
@@ -49,7 +51,6 @@
                     <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3"><i class="fa-solid fa-plus text-emerald-600"></i> Record New Visit</h2>
 
                     <form id="visitForm" class="space-y-8">
-                        <!-- STUDENT INFORMATION -->
                         <div>
                             <h3 class="font-medium text-lg mb-4 text-gray-700">STUDENT INFORMATION</h3>
                             <div class="grid grid-cols-2 gap-6">
@@ -72,7 +73,6 @@
                             </div>
                         </div>
 
-                        <!-- MEDICAL DETAILS -->
                         <div>
                             <h3 class="font-medium text-lg mb-4 text-gray-700">MEDICAL DETAILS</h3>
                             <div class="space-y-6">
@@ -98,7 +98,6 @@
                             </div>
                         </div>
 
-                        <!-- ADDITIONAL NOTES -->
                         <div class="flex items-center justify-between bg-emerald-50 border border-emerald-100 rounded-3xl p-5">
                             <div class="flex items-center gap-3">
                                 <i class="fa-solid fa-bell text-emerald-600"></i>
@@ -130,34 +129,41 @@
             const records = JSON.parse(localStorage.getItem('healthRecords') || '[]');
             const newRecord = {
                 id: "REC-" + String(records.length + 1001).padStart(3, '0'),
-                studentId: document.getElementById('studentId').value,
-                name: document.getElementById('fullName').value,
-                age: parseInt(document.getElementById('age').value),
-                disease: document.getElementById('disease').value,
-                treatment: document.getElementById('treatment').value,
+                studentId: document.getElementById('studentId').value || "STU-" + Math.floor(1000 + Math.random()*9000),
+                name: document.getElementById('fullName').value || "Unknown Student",
+                age: parseInt(document.getElementById('age').value) || 16,
+                disease: document.getElementById('disease').value || "General Checkup",
+                treatment: document.getElementById('treatment').value || "Rest and hydration",
                 visitDate: document.getElementById('visitDate').value,
-                status: "Recovered",
-                severity: "Mild"
+                status: "Recovered"
             };
             records.unshift(newRecord);
             localStorage.setItem('healthRecords', JSON.stringify(records));
 
+            localStorage.setItem('lastRecordSaved', 'true');
+
             alert("✅ Visit record saved successfully!");
-            window.location.href = "records.html";
+            window.location.href = "dashboard.html";
         }
 
         function saveDraft() {
-            alert("✅ Draft saved (demo)");
+            alert("✅ Draft saved");
         }
 
-        function logout() { localStorage.removeItem('isLoggedIn'); window.location.href = "login.html"; }
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
+            window.location.href = "login.html";
+        }
 
         window.onload = () => {
             tailwind.config = { theme: { extend: {} } };
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('visitDate').value = today;
-            document.getElementById('user-name').textContent = "Nurse Sarah";
-            document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+
+            const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            document.getElementById('user-name').textContent = user.name || "Nurse Sarah";
+            document.getElementById('user-role').textContent = user.role || "School Nurse";
         };
     </script>
 </body>
