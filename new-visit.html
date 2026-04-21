@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthSys - New Visit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap'); body{font-family:'Inter',system-ui;}</style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen overflow-hidden">
+        <!-- SIDEBAR (same as dashboard) -->
+        <div class="w-64 bg-white border-r flex flex-col">
+            <div class="p-6 border-b flex items-center gap-3">
+                <div class="w-9 h-9 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-2xl">🏥</div>
+                <div class="text-3xl font-semibold text-emerald-600">HealthSys</div>
+            </div>
+            <nav class="flex-1 px-3 py-6 space-y-1">
+                <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-house w-5"></i> Dashboard</a>
+                <a href="new-visit.html" class="flex items-center gap-3 px-4 py-3 bg-emerald-50 text-emerald-700 rounded-3xl font-medium"><i class="fa-solid fa-plus w-5"></i> New Visit</a>
+                <a href="records.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-folder w-5"></i> Records</a>
+                <a href="search.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-magnifying-glass w-5"></i> Search</a>
+                <a href="statistics.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-chart-bar w-5"></i> Statistics</a>
+            </nav>
+            <div class="p-6 border-t">
+                <a href="login.html" onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-3xl font-medium"><i class="fa-solid fa-right-from-bracket w-5"></i> Logout</a>
+            </div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="flex-1 flex flex-col">
+            <div class="h-16 bg-white border-b px-8 flex items-center justify-between">
+                <h1 class="text-2xl font-semibold">New Visit</h1>
+                <div class="flex items-center gap-8">
+                    <div id="current-date" class="font-medium"></div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-right">
+                            <div class="font-semibold" id="user-name">Nurse Sarah</div>
+                            <div class="text-xs text-gray-500">School Nurse</div>
+                        </div>
+                        <div class="w-9 h-9 bg-emerald-100 rounded-2xl flex items-center justify-center text-2xl">👩‍⚕️</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 p-8 overflow-auto">
+                <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-sm p-8">
+                    <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3"><i class="fa-solid fa-plus text-emerald-600"></i> Record New Visit</h2>
+
+                    <form id="visitForm" class="space-y-8">
+                        <!-- STUDENT INFORMATION -->
+                        <div>
+                            <h3 class="font-medium text-lg mb-4 text-gray-700">STUDENT INFORMATION</h3>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm mb-1">Student ID <span class="text-red-500">*</span></label>
+                                    <input id="studentId" type="text" class="w-full border border-gray-300 rounded-2xl px-4 py-3" placeholder="STU-XXXXXX" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm mb-1">Full Name <span class="text-red-500">*</span></label>
+                                    <input id="fullName" type="text" class="w-full border border-gray-300 rounded-2xl px-4 py-3" placeholder="Enter student's full name" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm mb-1">Age</label>
+                                    <input id="age" type="number" class="w-full border border-gray-300 rounded-2xl px-4 py-3" placeholder="e.g. 16">
+                                </div>
+                                <div>
+                                    <label class="block text-sm mb-1">Visit Date <span class="text-red-500">*</span></label>
+                                    <input id="visitDate" type="date" class="w-full border border-gray-300 rounded-2xl px-4 py-3" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MEDICAL DETAILS -->
+                        <div>
+                            <h3 class="font-medium text-lg mb-4 text-gray-700">MEDICAL DETAILS</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm mb-2">Disease / Condition <span class="text-red-500">*</span></label>
+                                    <input id="disease" type="text" class="w-full border border-gray-300 rounded-2xl px-4 py-3" placeholder="e.g. Seasonal Flu" required>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm mb-3">Severity Level</label>
+                                    <div class="flex gap-3">
+                                        <button type="button" onclick="selectSeverity(this)" class="severity-btn flex-1 py-3 border-2 border-emerald-200 rounded-3xl text-emerald-700 font-medium active">Mild</button>
+                                        <button type="button" onclick="selectSeverity(this)" class="severity-btn flex-1 py-3 border-2 border-amber-200 rounded-3xl text-amber-700">Moderate</button>
+                                        <button type="button" onclick="selectSeverity(this)" class="severity-btn flex-1 py-3 border-2 border-red-200 rounded-3xl text-red-700">Severe</button>
+                                        <button type="button" onclick="selectSeverity(this)" class="severity-btn flex-1 py-3 border-2 border-rose-600 rounded-3xl text-rose-600">Emergency</button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm mb-2">Treatment / Prescription <span class="text-red-500">*</span></label>
+                                    <textarea id="treatment" rows="3" class="w-full border border-gray-300 rounded-3xl px-4 py-3" placeholder="Describe treatment..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ADDITIONAL NOTES -->
+                        <div class="flex items-center justify-between bg-emerald-50 border border-emerald-100 rounded-3xl p-5">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-bell text-emerald-600"></i>
+                                <span>Parent / Guardian Notified</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="parentNotified" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <button type="button" onclick="saveDraft()" class="flex-1 border border-gray-300 py-4 rounded-3xl font-medium">Save Draft</button>
+                            <button type="button" onclick="saveVisit()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-3xl font-semibold">Save Record</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectSeverity(btn) {
+            document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('active', 'border-emerald-600'));
+            btn.classList.add('active', 'border-emerald-600');
+        }
+
+        function saveVisit() {
+            const records = JSON.parse(localStorage.getItem('healthRecords') || '[]');
+            const newRecord = {
+                id: "REC-" + String(records.length + 1001).padStart(3, '0'),
+                studentId: document.getElementById('studentId').value,
+                name: document.getElementById('fullName').value,
+                age: parseInt(document.getElementById('age').value),
+                disease: document.getElementById('disease').value,
+                treatment: document.getElementById('treatment').value,
+                visitDate: document.getElementById('visitDate').value,
+                status: "Recovered",
+                severity: "Mild"
+            };
+            records.unshift(newRecord);
+            localStorage.setItem('healthRecords', JSON.stringify(records));
+
+            alert("✅ Visit record saved successfully!");
+            window.location.href = "records.html";
+        }
+
+        function saveDraft() {
+            alert("✅ Draft saved (demo)");
+        }
+
+        function logout() { localStorage.removeItem('isLoggedIn'); window.location.href = "login.html"; }
+
+        window.onload = () => {
+            tailwind.config = { theme: { extend: {} } };
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('visitDate').value = today;
+            document.getElementById('user-name').textContent = "Nurse Sarah";
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+        };
+    </script>
+</body>
+</html>
