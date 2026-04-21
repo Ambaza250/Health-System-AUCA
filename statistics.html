@@ -10,6 +10,10 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         body { font-family: 'Inter', system-ui; }
+        .chart-container {
+            height: 320px;   /* Fixed height like Figma */
+            position: relative;
+        }
     </style>
 </head>
 <body class="bg-slate-50">
@@ -53,15 +57,15 @@
                     <!-- Top Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white rounded-3xl p-8 shadow-sm">
-                            <div class="text-6xl font-bold text-gray-900" id="total-cases">342</div>
+                            <div class="text-6xl font-bold text-gray-900" id="total-cases">0</div>
                             <div class="text-gray-500 mt-1">Total Cases</div>
                         </div>
                         <div class="bg-white rounded-3xl p-8 shadow-sm">
-                            <div class="text-5xl font-bold text-orange-500" id="most-common">Seasonal Flu</div>
+                            <div class="text-5xl font-bold text-orange-500" id="most-common">No Data</div>
                             <div class="text-gray-500 mt-1">Most Common</div>
                         </div>
                         <div class="bg-white rounded-3xl p-8 shadow-sm">
-                            <div class="text-6xl font-bold text-gray-900" id="avg-visits">18.4</div>
+                            <div class="text-6xl font-bold text-gray-900" id="avg-visits">0</div>
                             <div class="text-gray-500 mt-1">Avg. Daily Visits</div>
                         </div>
                     </div>
@@ -71,13 +75,17 @@
                         <!-- Bar Chart -->
                         <div class="bg-white rounded-3xl p-8 shadow-sm">
                             <h3 class="font-semibold text-lg mb-6">Cases per Disease</h3>
-                            <canvas id="casesBarChart" height="110"></canvas>
+                            <div class="chart-container">
+                                <canvas id="casesBarChart"></canvas>
+                            </div>
                         </div>
 
                         <!-- Line Chart -->
                         <div class="bg-white rounded-3xl p-8 shadow-sm">
                             <h3 class="font-semibold text-lg mb-6">Visits Over Time</h3>
-                            <canvas id="visitsLineChart" height="110"></canvas>
+                            <div class="chart-container">
+                                <canvas id="visitsLineChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -110,15 +118,17 @@
         function calculateStats(records) {
             const totalCases = records.length;
 
-            // Most common disease
             const diseaseCount = {};
             records.forEach(r => {
                 diseaseCount[r.disease] = (diseaseCount[r.disease] || 0) + 1;
             });
-            const mostCommon = Object.keys(diseaseCount).reduce((a, b) => 
-                diseaseCount[a] > diseaseCount[b] ? a : b, "No Data");
 
-            // Avg daily visits (mock calculation)
+            let mostCommon = "No Data";
+            if (Object.keys(diseaseCount).length > 0) {
+                mostCommon = Object.keys(diseaseCount).reduce((a, b) => 
+                    diseaseCount[a] > diseaseCount[b] ? a : b);
+            }
+
             const avgVisits = (totalCases / 18.5).toFixed(1);
 
             return { totalCases, mostCommon, avgVisits, diseaseCount };
@@ -130,27 +140,27 @@
                 diseaseCount[r.disease] = (diseaseCount[r.disease] || 0) + 1;
             });
 
-            const sortedDiseases = Object.entries(diseaseCount)
+            const sorted = Object.entries(diseaseCount)
                 .sort((a, b) => b[1] - a[1])
-                .slice(0, 6);
+                .slice(0, 5);
 
-            const labels = sortedDiseases.map(d => d[0]);
-            const data = sortedDiseases.map(d => d[1]);
+            const labels = sorted.map(d => d[0]);
+            const data = sorted.map(d => d[1]);
 
             // Destroy old charts
             if (barChart) barChart.destroy();
             if (lineChart) lineChart.destroy();
 
-            // Bar Chart
+            // Fixed-size Bar Chart
             barChart = new Chart(document.getElementById('casesBarChart'), {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: labels.length ? labels : ["No Data"],
                     datasets: [{
-                        label: 'Number of Cases',
-                        data: data,
+                        label: 'Cases',
+                        data: data.length ? data : [0],
                         backgroundColor: '#10b981',
-                        borderRadius: 8,
+                        borderRadius: 6,
                     }]
                 },
                 options: {
@@ -158,30 +168,27 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
-                        x: { grid: { color: '#f3f4f6' } }
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { color: '#f1f5f9' } }
                     }
                 }
             });
 
-            // Line Chart (mock monthly trend based on real data)
-            const months = ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
-            const visitsTrend = [312, 278, 210, 345, 412, 389]; // Can be made dynamic later
-
+            // Fixed-size Line Chart (mock trend - can be enhanced later)
             lineChart = new Chart(document.getElementById('visitsLineChart'), {
                 type: 'line',
                 data: {
-                    labels: months,
+                    labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
                     datasets: [{
                         label: 'Visits',
-                        data: visitsTrend,
+                        data: [312, 278, 210, 345, 412, 389],
                         borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.08)',
                         tension: 0.4,
                         borderWidth: 3,
-                        pointRadius: 5,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderWidth: 3
+                        pointRadius: 4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderWidth: 2
                     }]
                 },
                 options: {
@@ -189,8 +196,8 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: '#f3f4f6' } },
-                        x: { grid: { color: '#f3f4f6' } }
+                        y: { grid: { color: '#f1f5f9' } },
+                        x: { grid: { color: '#f1f5f9' } }
                     }
                 }
             });
@@ -201,7 +208,6 @@
             window.location.href = "login.html";
         }
 
-        // Initialize
         window.onload = () => {
             tailwind.config = { theme: { extend: {} } };
             document.getElementById('user-name').textContent = "Nurse Sarah";
