@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthSys - Statistics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap'); body{font-family:'Inter',system-ui;}</style>
+</head>
+<body class="bg-slate-50">
+    <!-- Sidebar + Topbar same as others -->
+
+    <div class="p-8">
+        <div class="grid grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-3xl p-8"><div class="text-5xl font-bold">342</div><div>Total Cases</div></div>
+            <div class="bg-white rounded-3xl p-8"><div class="text-5xl font-bold text-amber-600">Seasonal Flu</div><div>Most Common</div></div>
+            <div class="bg-white rounded-3xl p-8"><div class="text-5xl font-bold">18.4</div><div>Avg. Daily Visits</div></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8">
+            <div class="bg-white rounded-3xl p-8">
+                <h3 class="font-semibold mb-4">Cases per Disease</h3>
+                <canvas id="barChart" height="120"></canvas>
+            </div>
+            <div class="bg-white rounded-3xl p-8">
+                <h3 class="font-semibold mb-4">Visits Over Time</h3>
+                <canvas id="lineChart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = () => {
+            new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: { labels: ['Flu','Cold','Migraine','...'], datasets: [{data: [45,30,20,17,14,11,7], backgroundColor: '#10b981'}] }
+            });
+            new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: { labels: ['May','Jun','Jul','Aug','Sep','Oct'], datasets: [{label:'Visits', data:[320,280,210,340,410,390], borderColor:'#10b981'}] }
+            });
+        };
+    </script>
+</body>
+</html>
