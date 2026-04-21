@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthSys - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', system-ui; }
+        .green-gradient { background: linear-gradient(135deg, #10b981, #059669); }
+    </style>
+</head>
+<body class="bg-[#f8fafc]">
+    <div class="min-h-screen flex">
+        <!-- LEFT PANEL (matches screenshot 1) -->
+        <div class="w-1/2 green-gradient text-white p-12 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl">🏥</div>
+                    <div>
+                        <span class="text-4xl font-semibold tracking-tight">HealthSys</span>
+                        <span class="text-sm block -mt-1 opacity-80">Education Division</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Illustration -->
+            <div class="flex justify-center">
+                <div class="w-72 h-72 bg-white/10 backdrop-blur-3xl rounded-3xl shadow-2xl flex items-center justify-center text-[180px] relative">
+                    👩‍⚕️
+                    <div class="absolute -bottom-2 -right-2 bg-white text-emerald-600 text-4xl p-3 rounded-2xl shadow-xl">📋</div>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <!-- Trust badges -->
+                <div class="flex gap-4 justify-center">
+                    <div class="bg-white/10 backdrop-blur-md px-6 py-3 rounded-3xl text-center">
+                        <div class="text-3xl font-bold">98%</div>
+                        <div class="text-xs uppercase tracking-widest">Uptime</div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md px-6 py-3 rounded-3xl text-center">
+                        <div class="text-3xl font-bold">256-bit</div>
+                        <div class="text-xs uppercase tracking-widest">Encryption</div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md px-6 py-3 rounded-3xl text-center">
+                        <div class="text-3xl font-bold">HIPAA</div>
+                        <div class="text-xs uppercase tracking-widest">Compliant</div>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-4xl font-semibold leading-none">Comprehensive Health<br>Record Management</h2>
+                    <p class="mt-6 text-lg opacity-90">Securely access and manage student health records with enterprise-grade privacy protection.</p>
+                </div>
+            </div>
+
+            <div class="text-xs opacity-60 text-center">Student Health Record Management System • v1.0.0</div>
+        </div>
+
+        <!-- RIGHT PANEL - LOGIN FORM -->
+        <div class="w-1/2 flex items-center justify-center p-12">
+            <div class="w-full max-w-md">
+                <div class="flex items-center gap-2 bg-emerald-100 text-emerald-700 text-sm font-medium px-4 py-2 rounded-3xl w-fit">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Secure System • SSL Encrypted
+                </div>
+
+                <h1 class="text-4xl font-semibold mt-6">Welcome Back</h1>
+                <p class="text-gray-600 mt-2">Sign in to the Student Health Record Management System to continue.</p>
+
+                <form id="loginForm" class="mt-10 space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email or Username</label>
+                        <input type="text" id="username" value="nurse.sarah@auca.edu" 
+                               class="w-full px-4 py-4 border border-gray-200 rounded-3xl focus:outline-none focus:border-emerald-500 text-base"
+                               placeholder="e.g. john.doe@university.edu">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <a href="#" class="text-emerald-600 text-sm hover:underline">Forgot password?</a>
+                        </div>
+                        <div class="relative">
+                            <input type="password" id="password" value="demo123" 
+                                   class="w-full px-4 py-4 border border-gray-200 rounded-3xl focus:outline-none focus:border-emerald-500 text-base">
+                            <i onclick="togglePassword()" class="fa-solid fa-eye absolute right-5 top-5 text-gray-400 cursor-pointer"></i>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="remember" checked class="w-5 h-5 accent-emerald-500">
+                        <label for="remember" class="text-sm text-gray-600">Keep me signed in on this device</label>
+                    </div>
+
+                    <button onclick="handleLogin(event)" 
+                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-lg py-4 rounded-3xl flex items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Secure Login →
+                    </button>
+
+                    <div class="relative text-center my-6">
+                        <div class="absolute inset-0 flex items-center"><div class="h-px bg-gray-200 w-full"></div></div>
+                        <span class="bg-white px-4 text-gray-400 text-sm">or continue with</span>
+                    </div>
+
+                    <button onclick="handleSSO(event)" 
+                            class="w-full border-2 border-gray-200 hover:border-gray-300 font-medium py-4 rounded-3xl flex items-center justify-center gap-3 text-base">
+                        <i class="fa-solid fa-university"></i>
+                        Sign in with Institution SSO
+                    </button>
+
+                    <div class="text-center text-xs text-gray-500 mt-8">
+                        Having trouble accessing your account? 
+                        <a href="#" class="text-emerald-600 hover:underline">Contact Support</a>
+                    </div>
+
+                    <!-- Footer stats -->
+                    <div class="grid grid-cols-4 gap-4 text-center text-[10px] mt-12">
+                        <div>420+<br><span class="text-emerald-600 font-medium">Students</span></div>
+                        <div>87%<br><span class="text-emerald-600 font-medium">Privacy</span></div>
+                        <div>119%<br><span class="text-emerald-600 font-medium">Overcame</span></div>
+                        <div>4<br><span class="text-emerald-600 font-medium">Systems</span></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const pwd = document.getElementById('password');
+            const icon = event.target;
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                pwd.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('currentUser', JSON.stringify({ name: "Nurse Sarah", role: "School Nurse" }));
+            window.location.href = "dashboard.html";
+        }
+
+        function handleSSO(e) {
+            e.preventDefault();
+            alert("✅ Institution SSO login successful (demo)");
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = "dashboard.html";
+        }
+
+        // Auto-init Tailwind
+        document.addEventListener('DOMContentLoaded', () => {
+            tailwind.config = { theme: { extend: {} } };
+        });
+    </script>
+</body>
+</html>
