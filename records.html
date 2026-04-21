@@ -6,96 +6,197 @@
     <title>HealthSys - All Records</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap'); body{font-family:'Inter',system-ui;}</style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', system-ui; }
+    </style>
 </head>
 <body class="bg-slate-50">
-    <!-- Sidebar same as above (copy from dashboard or new-visit) -->
     <div class="flex h-screen overflow-hidden">
-        <div class="w-64 bg-white border-r flex flex-col"> ... <!-- paste sidebar code from previous files --> </div>
+        <!-- SIDEBAR -->
+        <div class="w-64 bg-white border-r flex flex-col">
+            <div class="p-6 border-b flex items-center gap-3">
+                <div class="w-9 h-9 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-2xl">🏥</div>
+                <div class="text-3xl font-semibold text-emerald-600">HealthSys</div>
+            </div>
+            <nav class="flex-1 px-3 py-6 space-y-1">
+                <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-house w-5"></i> Dashboard</a>
+                <a href="new-visit.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-plus w-5"></i> New Visit</a>
+                <a href="records.html" class="flex items-center gap-3 px-4 py-3 bg-emerald-50 text-emerald-700 rounded-3xl font-medium"><i class="fa-solid fa-folder w-5"></i> Records <span class="ml-auto bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded-full">128</span></a>
+                <a href="search.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-magnifying-glass w-5"></i> Search</a>
+                <a href="statistics.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-chart-bar w-5"></i> Statistics</a>
+            </nav>
+            <div class="p-6 border-t">
+                <a href="login.html" onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-3xl font-medium"><i class="fa-solid fa-right-from-bracket w-5"></i> Logout</a>
+            </div>
+        </div>
 
+        <!-- MAIN CONTENT -->
         <div class="flex-1 flex flex-col">
+            <!-- TOP BAR -->
             <div class="h-16 bg-white border-b px-8 flex items-center justify-between">
                 <h1 class="text-2xl font-semibold">All Records</h1>
                 <div class="flex items-center gap-6">
-                    <button onclick="exportCSV()" class="px-6 py-2 border rounded-3xl flex items-center gap-2 hover:bg-gray-50"><i class="fa-solid fa-download"></i> Export</button>
-                    <div class="flex items-center gap-3"> ... user info ... </div>
+                    <button onclick="exportCSV()" class="flex items-center gap-2 px-5 py-2.5 border border-gray-300 rounded-3xl hover:bg-gray-50">
+                        <i class="fa-solid fa-download"></i> Export
+                    </button>
+                    <div class="flex items-center gap-3">
+                        <div class="text-right">
+                            <div class="font-semibold" id="user-name">Nurse Sarah</div>
+                            <div class="text-xs text-gray-500">School Nurse</div>
+                        </div>
+                        <div class="w-9 h-9 bg-emerald-100 rounded-2xl flex items-center justify-center text-xl">👩‍⚕️</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="p-8 flex-1 overflow-auto">
-                <div class="bg-white rounded-3xl p-6">
-                    <div class="flex gap-4 mb-6">
-                        <input id="searchInput" onkeyup="filterTable()" type="text" placeholder="Search by name or ID..." class="flex-1 border border-gray-300 rounded-3xl px-5 py-3">
-                        <select onchange="filterTable()" class="border border-gray-300 rounded-3xl px-5">
-                            <option>All Diseases</option>
+            <!-- CONTENT -->
+            <div class="flex-1 p-8 overflow-auto">
+                <div class="bg-white rounded-3xl shadow-sm">
+                    <!-- Search & Filter -->
+                    <div class="p-6 border-b flex gap-4">
+                        <div class="flex-1 relative">
+                            <input id="searchInput" 
+                                   onkeyup="filterTable()" 
+                                   type="text" 
+                                   placeholder="Search by name or ID..." 
+                                   class="w-full border border-gray-200 focus:border-emerald-500 rounded-3xl px-6 py-4 text-base outline-none">
+                        </div>
+                        <select id="diseaseFilter" onchange="filterTable()" 
+                                class="border border-gray-200 rounded-3xl px-6 py-4 outline-none">
+                            <option value="">All Diseases</option>
                         </select>
                     </div>
 
-                    <table class="w-full" id="recordsTable"></table>
+                    <!-- Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full" id="recordsTable"></table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 border-t flex items-center justify-between text-sm text-gray-500">
+                        <div id="showing-info">Showing 1-10 of 128 records</div>
+                        <div class="flex gap-2">
+                            <button class="px-4 py-2 border rounded-3xl">Previous</button>
+                            <button class="px-4 py-2 bg-emerald-600 text-white rounded-3xl">1</button>
+                            <button class="px-4 py-2 border rounded-3xl">2</button>
+                            <button class="px-4 py-2 border rounded-3xl">3</button>
+                            <button class="px-4 py-2 border rounded-3xl">Next</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Edit Modal -->
-    <div id="editModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-        <div class="bg-white rounded-3xl w-full max-w-lg mx-4 p-8">
-            <h2 class="text-2xl font-semibold mb-6">Update Student Record</h2>
-            <form id="editForm" class="space-y-6">
-                <!-- Fields populated by JS -->
-                <button type="button" onclick="saveEdit()" class="w-full bg-emerald-600 text-white py-4 rounded-3xl">Save Changes</button>
-            </form>
         </div>
     </div>
 
     <script>
-        // Reuse initDatabase, getRecords, saveRecords from dashboard
-        function initDatabase() { /* same as dashboard */ }
-        function getRecords() { /* same */ }
-        function saveRecords(records) { /* same */ }
+        // ============== DATABASE FUNCTIONS ==============
+        function initDatabase() {
+            if (!localStorage.getItem('healthRecords')) {
+                const initial = [
+                    {id:"REC-001", studentId:"STU-8921", name:"Michael Chen", age:18, disease:"Seasonal Flu", treatment:"Tamiflu 75mg, Rest", visitDate:"2025-10-15", status:"Recovered"},
+                    {id:"REC-002", studentId:"STU-7432", name:"Sarah Jenkins", age:17, disease:"Asthma", treatment:"Salbutamol inhaler", visitDate:"2025-10-15", status:"Chronic"},
+                    {id:"REC-003", studentId:"STU-9012", name:"David Rodriguez", age:15, disease:"Allergic Reaction", treatment:"Epinephrine, Benadryl", visitDate:"2025-10-14", status:"Emergency"}
+                ];
+                localStorage.setItem('healthRecords', JSON.stringify(initial));
+            }
+        }
 
-        function renderTable(filtered) {
-            let html = `<thead><tr class="text-xs uppercase text-gray-400"><th class="py-4 text-left">Student ID</th><th>Name</th><th>Age</th><th>Disease</th><th>Treatment</th><th>Date</th><th>Actions</th></tr></thead><tbody>`;
-            filtered.forEach(record => {
-                html += `<tr class="border-t">
-                    <td class="py-4">${record.studentId}</td>
-                    <td class="py-4">${record.name}</td>
-                    <td class="py-4">${record.age}</td>
-                    <td class="py-4">${record.disease}</td>
-                    <td class="py-4 text-sm">${record.treatment.substring(0,40)}...</td>
-                    <td class="py-4">${record.visitDate}</td>
-                    <td class="py-4">
-                        <button onclick="editRecord('${record.id}')" class="text-emerald-600 hover:text-emerald-700"><i class="fa-solid fa-pen"></i></button>
-                    </td>
-                </tr>`;
+        function getRecords() {
+            initDatabase();
+            return JSON.parse(localStorage.getItem('healthRecords') || '[]');
+        }
+
+        function saveRecords(records) {
+            localStorage.setItem('healthRecords', JSON.stringify(records));
+        }
+
+        // ============== RENDER TABLE ==============
+        function renderTable(records) {
+            let html = `
+                <thead>
+                    <tr class="text-xs text-gray-400 border-b">
+                        <th class="text-left py-5 px-6 font-normal">STUDENT ID</th>
+                        <th class="text-left py-5 px-6 font-normal">NAME</th>
+                        <th class="text-left py-5 px-6 font-normal">AGE</th>
+                        <th class="text-left py-5 px-6 font-normal">DISEASE</th>
+                        <th class="text-left py-5 px-6 font-normal">TREATMENT</th>
+                        <th class="text-left py-5 px-6 font-normal">DATE</th>
+                        <th class="text-left py-5 px-6 font-normal">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">`;
+
+            records.forEach(record => {
+                html += `
+                    <tr class="border-b last:border-none hover:bg-slate-50">
+                        <td class="py-5 px-6 font-medium">${record.studentId}</td>
+                        <td class="py-5 px-6">${record.name}</td>
+                        <td class="py-5 px-6">${record.age}</td>
+                        <td class="py-5 px-6">
+                            <span class="px-4 py-1 bg-emerald-100 text-emerald-700 rounded-3xl text-xs">${record.disease}</span>
+                        </td>
+                        <td class="py-5 px-6 text-gray-600">${record.treatment.length > 45 ? record.treatment.substring(0,45) + '...' : record.treatment}</td>
+                        <td class="py-5 px-6">${record.visitDate}</td>
+                        <td class="py-5 px-6">
+                            <button onclick="editRecord('${record.id}')" class="text-emerald-600 hover:text-emerald-700 mr-3">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </td>
+                    </tr>`;
             });
+
             html += `</tbody>`;
             document.getElementById('recordsTable').innerHTML = html;
         }
 
         function filterTable() {
-            const term = document.getElementById('searchInput').value.toLowerCase();
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const records = getRecords();
+            
             const filtered = records.filter(r => 
-                r.name.toLowerCase().includes(term) || r.studentId.toLowerCase().includes(term)
+                r.name.toLowerCase().includes(searchTerm) ||
+                r.studentId.toLowerCase().includes(searchTerm) ||
+                r.disease.toLowerCase().includes(searchTerm)
             );
+            
             renderTable(filtered);
         }
 
         function editRecord(id) {
-            // Simple modal logic (you can expand it)
-            alert("Edit modal opened for record " + id + " (demo)");
-            // In real version, populate modal and save back to localStorage
+            alert(`✅ Opening edit modal for record ${id}\n\n(This can be expanded into a full modal later)`);
         }
 
         function exportCSV() {
-            alert("✅ Records exported as CSV (demo)");
+            const records = getRecords();
+            let csv = "Student ID,Name,Age,Disease,Treatment,Date\n";
+            records.forEach(r => {
+                csv += `${r.studentId},${r.name},${r.age},${r.disease},"${r.treatment}",${r.visitDate}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'health-records.csv';
+            a.click();
+            alert("✅ Records exported successfully!");
         }
 
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = "login.html";
+        }
+
+        // ============== INITIALIZE ==============
         window.onload = () => {
             tailwind.config = { theme: { extend: {} } };
             initDatabase();
-            renderTable(getRecords());
+
+            const records = getRecords();
+            renderTable(records);
+
+            // Show user name
+            document.getElementById('user-name').textContent = "Nurse Sarah";
         };
     </script>
 </body>
