@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthSys - Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap'); body{font-family:'Inter',system-ui;}</style>
+</head>
+<body class="bg-slate-50">
+    <!-- Sidebar same -->
+    <!-- Top bar same -->
+
+    <div class="p-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-white rounded-3xl p-8">
+                <div class="flex gap-4 mb-8">
+                    <input id="searchTerm" type="text" placeholder="Search diseases, conditions..." class="flex-1 border border-gray-300 rounded-3xl px-6 py-4 text-lg">
+                    <button onclick="performSearch()" class="px-10 bg-emerald-600 text-white rounded-3xl">Search</button>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6" id="resultsGrid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function performSearch() {
+            const term = document.getElementById('searchTerm').value || "Flu";
+            const mockResults = [
+                {name:"Seasonal Flu", cases:34, week:12, color:"emerald"},
+                {name:"Influenza A", cases:18, week:5, color:"blue"},
+                // ... more
+            ];
+            let html = "";
+            mockResults.forEach(r => {
+                html += `<div class="bg-white border rounded-3xl p-6">
+                    <div class="font-semibold">${r.name}</div>
+                    <div class="text-4xl font-bold text-${r.color}-600 mt-2">${r.cases}</div>
+                    <div class="text-sm text-gray-500">Total Cases</div>
+                </div>`;
+            });
+            document.getElementById('resultsGrid').innerHTML = html;
+        }
+
+        window.onload = () => { performSearch(); };
+    </script>
+</body>
+</html>
