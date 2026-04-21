@@ -31,49 +31,30 @@
             </div>
         </div>
 
-        <!-- MAIN CONTENT -->
         <div class="flex-1 flex flex-col">
-            <!-- TOP BAR -->
             <div class="h-16 bg-white border-b px-8 flex items-center justify-between">
                 <h1 class="text-2xl font-semibold">Search Health Records</h1>
-                <div class="flex items-center gap-6">
-                    <div class="flex items-center gap-3">
-                        <div class="text-right">
-                            <div class="font-semibold" id="user-name">Nurse Sarah</div>
-                            <div class="text-xs text-gray-500">School Nurse</div>
-                        </div>
-                        <div class="w-9 h-9 bg-emerald-100 rounded-2xl flex items-center justify-center text-xl">👩‍⚕️</div>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="font-semibold" id="user-name"></div>
+                        <div class="text-xs text-gray-500" id="user-role"></div>
                     </div>
+                    <div class="w-9 h-9 bg-emerald-100 rounded-2xl flex items-center justify-center text-xl">👩‍⚕️</div>
                 </div>
             </div>
 
-            <!-- SEARCH PAGE CONTENT -->
             <div class="flex-1 p-8">
                 <div class="max-w-5xl mx-auto">
-                    <!-- Search Bar -->
                     <div class="bg-white rounded-3xl p-2 flex items-center shadow-sm mb-8">
-                        <input id="searchInput" 
-                               type="text" 
-                               placeholder="Search diseases, conditions, or diagnoses..."
-                               class="flex-1 bg-transparent outline-none px-6 py-4 text-lg"
-                               onkeypress="if(event.key === 'Enter') performSearch()">
-                        <button onclick="performSearch()" 
-                                class="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-4 rounded-3xl font-medium flex items-center gap-2">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            Search
-                        </button>
+                        <input id="searchInput" type="text" placeholder="Search diseases, conditions..." 
+                               class="flex-1 bg-transparent outline-none px-6 py-4 text-lg" onkeypress="if(event.key==='Enter') performSearch()">
+                        <button onclick="performSearch()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-4 rounded-3xl font-medium">Search</button>
                     </div>
 
-                    <!-- Results -->
-                    <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Dynamically populated -->
-                    </div>
-
-                    <!-- Empty State -->
+                    <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                     <div id="emptyState" class="hidden text-center py-20">
                         <div class="text-6xl mb-4">🔍</div>
                         <h3 class="text-xl font-medium">No results found</h3>
-                        <p class="text-gray-500 mt-2">Try searching with different keywords</p>
                     </div>
                 </div>
             </div>
@@ -81,50 +62,25 @@
     </div>
 
     <script>
-        // ============== DATABASE ==============
         function getRecords() {
             if (!localStorage.getItem('healthRecords')) {
-                const initial = [
-                    {id:"REC-001", studentId:"STU-8921", name:"Michael Chen", disease:"Seasonal Flu"},
-                    {id:"REC-002", studentId:"STU-7432", name:"Sarah Jenkins", disease:"Asthma"},
-                    {id:"REC-003", studentId:"STU-9012", name:"David Rodriguez", disease:"Allergic Reaction"},
-                    {id:"REC-004", studentId:"STU-8104", name:"Amara Osei", disease:"Migraine"},
-                    {id:"REC-005", studentId:"STU-5577", name:"Lucas Tan", disease:"Sprained Ankle"},
-                    {id:"REC-006", studentId:"STU-1238", name:"Priya Sharma", disease:"Dengue Fever"},
-                    {id:"REC-007", studentId:"STU-3831", name:"James Okafour", disease:"Hypertension"},
-                    {id:"REC-008", studentId:"STU-2956", name:"Elena Vasquez", disease:"Conjunctivitis"},
-                ];
-                localStorage.setItem('healthRecords', JSON.stringify(initial));
+                localStorage.setItem('healthRecords', JSON.stringify([]));
             }
-            return JSON.parse(localStorage.getItem('healthRecords') || '[]');
+            return JSON.parse(localStorage.getItem('healthRecords'));
         }
 
-        // ============== SEARCH & RENDER ==============
         function performSearch() {
             const term = document.getElementById('searchInput').value.trim().toLowerCase();
             const records = getRecords();
-
-            // Group by disease and count
             const diseaseMap = {};
             records.forEach(r => {
-                const disease = r.disease;
-                if (!diseaseMap[disease]) diseaseMap[disease] = 0;
-                diseaseMap[disease]++;
+                const d = r.disease || "Unknown";
+                diseaseMap[d] = (diseaseMap[d] || 0) + 1;
             });
 
-            let results = Object.entries(diseaseMap).map(([disease, count]) => ({ disease, count }));
+            let results = Object.entries(diseaseMap).map(([disease, count]) => ({disease, count}));
+            if (term) results = results.filter(r => r.disease.toLowerCase().includes(term));
 
-            // Filter if search term exists
-            if (term) {
-                results = results.filter(item => 
-                    item.disease.toLowerCase().includes(term)
-                );
-            }
-
-            renderResults(results);
-        }
-
-        function renderResults(results) {
             const container = document.getElementById('resultsContainer');
             const empty = document.getElementById('emptyState');
             container.innerHTML = '';
@@ -133,54 +89,35 @@
                 empty.classList.remove('hidden');
                 return;
             }
-
             empty.classList.add('hidden');
 
             results.forEach(item => {
-                const color = item.disease.toLowerCase().includes('flu') ? 'emerald' : 
-                             item.disease.toLowerCase().includes('cold') ? 'blue' : 'violet';
-
-                const card = `
-                    <div class="bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-md transition-shadow">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="font-semibold text-lg">${item.disease}</div>
-                                <div class="text-sm text-gray-500 mt-1">Condition</div>
-                            </div>
-                            <div class="text-4xl">🦠</div>
-                        </div>
-                        <div class="mt-8">
-                            <div class="text-5xl font-bold text-${color}-600">${item.count}</div>
-                            <div class="text-sm text-gray-500">Total Cases</div>
-                        </div>
-                        <button onclick="viewConditionRecords('${item.disease}')" 
-                                class="mt-6 w-full py-3 border border-gray-200 hover:border-emerald-300 rounded-3xl text-sm font-medium">
-                            View All Records →
-                        </button>
+                container.innerHTML += `
+                    <div class="bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-md">
+                        <div class="font-semibold text-lg">${item.disease}</div>
+                        <div class="text-5xl font-bold text-emerald-600 mt-4">${item.count}</div>
+                        <div class="text-sm text-gray-500">Total Cases</div>
+                        <button onclick="viewCondition('${item.disease}')" class="mt-6 w-full py-3 border rounded-3xl text-sm">View Records →</button>
                     </div>`;
-                container.innerHTML += card;
             });
         }
 
-        function viewConditionRecords(disease) {
-            alert(`Showing all records for: ${disease}\n\n(This can open filtered records page in future)`);
+        function viewCondition(disease) {
+            alert(`Showing records for: ${disease}`);
         }
 
         function logout() {
             localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
             window.location.href = "login.html";
         }
 
-        // ============== INIT ==============
         window.onload = () => {
             tailwind.config = { theme: { extend: {} } };
-            document.getElementById('user-name').textContent = "Nurse Sarah";
-            
-            // Default search on load
-            setTimeout(() => {
-                document.getElementById('searchInput').value = "flu";
-                performSearch();
-            }, 300);
+            const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            document.getElementById('user-name').textContent = user.name || "Nurse Sarah";
+            document.getElementById('user-role').textContent = user.role || "School Nurse";
+            performSearch();
         };
     </script>
 </body>
