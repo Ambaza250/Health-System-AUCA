@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthSys - All Records</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap'); body{font-family:'Inter',system-ui;}</style>
+</head>
+<body class="bg-slate-50">
+    <!-- Sidebar same as above (copy from dashboard or new-visit) -->
+    <div class="flex h-screen overflow-hidden">
+        <div class="w-64 bg-white border-r flex flex-col"> ... <!-- paste sidebar code from previous files --> </div>
+
+        <div class="flex-1 flex flex-col">
+            <div class="h-16 bg-white border-b px-8 flex items-center justify-between">
+                <h1 class="text-2xl font-semibold">All Records</h1>
+                <div class="flex items-center gap-6">
+                    <button onclick="exportCSV()" class="px-6 py-2 border rounded-3xl flex items-center gap-2 hover:bg-gray-50"><i class="fa-solid fa-download"></i> Export</button>
+                    <div class="flex items-center gap-3"> ... user info ... </div>
+                </div>
+            </div>
+
+            <div class="p-8 flex-1 overflow-auto">
+                <div class="bg-white rounded-3xl p-6">
+                    <div class="flex gap-4 mb-6">
+                        <input id="searchInput" onkeyup="filterTable()" type="text" placeholder="Search by name or ID..." class="flex-1 border border-gray-300 rounded-3xl px-5 py-3">
+                        <select onchange="filterTable()" class="border border-gray-300 rounded-3xl px-5">
+                            <option>All Diseases</option>
+                        </select>
+                    </div>
+
+                    <table class="w-full" id="recordsTable"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div class="bg-white rounded-3xl w-full max-w-lg mx-4 p-8">
+            <h2 class="text-2xl font-semibold mb-6">Update Student Record</h2>
+            <form id="editForm" class="space-y-6">
+                <!-- Fields populated by JS -->
+                <button type="button" onclick="saveEdit()" class="w-full bg-emerald-600 text-white py-4 rounded-3xl">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Reuse initDatabase, getRecords, saveRecords from dashboard
+        function initDatabase() { /* same as dashboard */ }
+        function getRecords() { /* same */ }
+        function saveRecords(records) { /* same */ }
+
+        function renderTable(filtered) {
+            let html = `<thead><tr class="text-xs uppercase text-gray-400"><th class="py-4 text-left">Student ID</th><th>Name</th><th>Age</th><th>Disease</th><th>Treatment</th><th>Date</th><th>Actions</th></tr></thead><tbody>`;
+            filtered.forEach(record => {
+                html += `<tr class="border-t">
+                    <td class="py-4">${record.studentId}</td>
+                    <td class="py-4">${record.name}</td>
+                    <td class="py-4">${record.age}</td>
+                    <td class="py-4">${record.disease}</td>
+                    <td class="py-4 text-sm">${record.treatment.substring(0,40)}...</td>
+                    <td class="py-4">${record.visitDate}</td>
+                    <td class="py-4">
+                        <button onclick="editRecord('${record.id}')" class="text-emerald-600 hover:text-emerald-700"><i class="fa-solid fa-pen"></i></button>
+                    </td>
+                </tr>`;
+            });
+            html += `</tbody>`;
+            document.getElementById('recordsTable').innerHTML = html;
+        }
+
+        function filterTable() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const records = getRecords();
+            const filtered = records.filter(r => 
+                r.name.toLowerCase().includes(term) || r.studentId.toLowerCase().includes(term)
+            );
+            renderTable(filtered);
+        }
+
+        function editRecord(id) {
+            // Simple modal logic (you can expand it)
+            alert("Edit modal opened for record " + id + " (demo)");
+            // In real version, populate modal and save back to localStorage
+        }
+
+        function exportCSV() {
+            alert("✅ Records exported as CSV (demo)");
+        }
+
+        window.onload = () => {
+            tailwind.config = { theme: { extend: {} } };
+            initDatabase();
+            renderTable(getRecords());
+        };
+    </script>
+</body>
+</html>
