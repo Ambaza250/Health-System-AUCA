@@ -22,7 +22,7 @@
             <nav class="flex-1 px-3 py-6 space-y-1">
                 <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-house w-5"></i> Dashboard</a>
                 <a href="new-visit.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-plus w-5"></i> New Visit</a>
-                <a href="records.html" class="flex items-center gap-3 px-4 py-3 bg-emerald-50 text-emerald-700 rounded-3xl font-medium"><i class="fa-solid fa-folder w-5"></i> Records <span class="ml-auto bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded-full">128</span></a>
+                <a href="records.html" class="flex items-center gap-3 px-4 py-3 bg-emerald-50 text-emerald-700 rounded-3xl font-medium"><i class="fa-solid fa-folder w-5"></i> Records</a>
                 <a href="search.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-magnifying-glass w-5"></i> Search</a>
                 <a href="statistics.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-3xl font-medium"><i class="fa-solid fa-chart-bar w-5"></i> Statistics</a>
             </nav>
@@ -31,9 +31,8 @@
             </div>
         </div>
 
-        <!-- MAIN CONTENT -->
+        <!-- MAIN -->
         <div class="flex-1 flex flex-col">
-            <!-- TOP BAR -->
             <div class="h-16 bg-white border-b px-8 flex items-center justify-between">
                 <h1 class="text-2xl font-semibold">All Records</h1>
                 <div class="flex items-center gap-6">
@@ -42,45 +41,33 @@
                     </button>
                     <div class="flex items-center gap-3">
                         <div class="text-right">
-                            <div class="font-semibold" id="user-name">Nurse Sarah</div>
-                            <div class="text-xs text-gray-500">School Nurse</div>
+                            <div class="font-semibold" id="user-name"></div>
+                            <div class="text-xs text-gray-500" id="user-role"></div>
                         </div>
                         <div class="w-9 h-9 bg-emerald-100 rounded-2xl flex items-center justify-center text-xl">👩‍⚕️</div>
                     </div>
                 </div>
             </div>
 
-            <!-- CONTENT -->
             <div class="flex-1 p-8 overflow-auto">
                 <div class="bg-white rounded-3xl shadow-sm">
-                    <!-- Search & Filter -->
                     <div class="p-6 border-b flex gap-4">
-                        <div class="flex-1 relative">
-                            <input id="searchInput" 
-                                   onkeyup="filterTable()" 
-                                   type="text" 
-                                   placeholder="Search by name or ID..." 
-                                   class="w-full border border-gray-200 focus:border-emerald-500 rounded-3xl px-6 py-4 text-base outline-none">
-                        </div>
-                        <select id="diseaseFilter" onchange="filterTable()" 
-                                class="border border-gray-200 rounded-3xl px-6 py-4 outline-none">
+                        <input id="searchInput" onkeyup="filterTable()" type="text" placeholder="Search by name or ID..." 
+                               class="flex-1 border border-gray-200 focus:border-emerald-500 rounded-3xl px-6 py-4 outline-none">
+                        <select id="diseaseFilter" onchange="filterTable()" class="border border-gray-200 rounded-3xl px-6 py-4 outline-none">
                             <option value="">All Diseases</option>
                         </select>
                     </div>
 
-                    <!-- Table -->
                     <div class="overflow-x-auto">
                         <table class="w-full" id="recordsTable"></table>
                     </div>
 
-                    <!-- Pagination -->
                     <div class="px-6 py-4 border-t flex items-center justify-between text-sm text-gray-500">
-                        <div id="showing-info">Showing 1-10 of 128 records</div>
+                        <div id="showing-info">Showing all records</div>
                         <div class="flex gap-2">
                             <button class="px-4 py-2 border rounded-3xl">Previous</button>
                             <button class="px-4 py-2 bg-emerald-600 text-white rounded-3xl">1</button>
-                            <button class="px-4 py-2 border rounded-3xl">2</button>
-                            <button class="px-4 py-2 border rounded-3xl">3</button>
                             <button class="px-4 py-2 border rounded-3xl">Next</button>
                         </div>
                     </div>
@@ -90,13 +77,11 @@
     </div>
 
     <script>
-        // ============== DATABASE FUNCTIONS ==============
         function initDatabase() {
             if (!localStorage.getItem('healthRecords')) {
                 const initial = [
                     {id:"REC-001", studentId:"STU-8921", name:"Michael Chen", age:18, disease:"Seasonal Flu", treatment:"Tamiflu 75mg, Rest", visitDate:"2025-10-15", status:"Recovered"},
-                    {id:"REC-002", studentId:"STU-7432", name:"Sarah Jenkins", age:17, disease:"Asthma", treatment:"Salbutamol inhaler", visitDate:"2025-10-15", status:"Chronic"},
-                    {id:"REC-003", studentId:"STU-9012", name:"David Rodriguez", age:15, disease:"Allergic Reaction", treatment:"Epinephrine, Benadryl", visitDate:"2025-10-14", status:"Emergency"}
+                    {id:"REC-002", studentId:"STU-7432", name:"Sarah Jenkins", age:17, disease:"Asthma", treatment:"Salbutamol inhaler", visitDate:"2025-10-15", status:"Chronic"}
                 ];
                 localStorage.setItem('healthRecords', JSON.stringify(initial));
             }
@@ -107,96 +92,66 @@
             return JSON.parse(localStorage.getItem('healthRecords') || '[]');
         }
 
-        function saveRecords(records) {
-            localStorage.setItem('healthRecords', JSON.stringify(records));
-        }
-
-        // ============== RENDER TABLE ==============
         function renderTable(records) {
             let html = `
                 <thead>
                     <tr class="text-xs text-gray-400 border-b">
-                        <th class="text-left py-5 px-6 font-normal">STUDENT ID</th>
-                        <th class="text-left py-5 px-6 font-normal">NAME</th>
-                        <th class="text-left py-5 px-6 font-normal">AGE</th>
-                        <th class="text-left py-5 px-6 font-normal">DISEASE</th>
-                        <th class="text-left py-5 px-6 font-normal">TREATMENT</th>
-                        <th class="text-left py-5 px-6 font-normal">DATE</th>
-                        <th class="text-left py-5 px-6 font-normal">ACTIONS</th>
+                        <th class="text-left py-5 px-6">STUDENT ID</th>
+                        <th class="text-left py-5 px-6">NAME</th>
+                        <th class="text-left py-5 px-6">AGE</th>
+                        <th class="text-left py-5 px-6">DISEASE</th>
+                        <th class="text-left py-5 px-6">TREATMENT</th>
+                        <th class="text-left py-5 px-6">DATE</th>
+                        <th class="text-left py-5 px-6">ACTIONS</th>
                     </tr>
                 </thead>
-                <tbody class="text-sm">`;
-
-            records.forEach(record => {
+                <tbody>`;
+            records.forEach(r => {
                 html += `
-                    <tr class="border-b last:border-none hover:bg-slate-50">
-                        <td class="py-5 px-6 font-medium">${record.studentId}</td>
-                        <td class="py-5 px-6">${record.name}</td>
-                        <td class="py-5 px-6">${record.age}</td>
-                        <td class="py-5 px-6">
-                            <span class="px-4 py-1 bg-emerald-100 text-emerald-700 rounded-3xl text-xs">${record.disease}</span>
-                        </td>
-                        <td class="py-5 px-6 text-gray-600">${record.treatment.length > 45 ? record.treatment.substring(0,45) + '...' : record.treatment}</td>
-                        <td class="py-5 px-6">${record.visitDate}</td>
-                        <td class="py-5 px-6">
-                            <button onclick="editRecord('${record.id}')" class="text-emerald-600 hover:text-emerald-700 mr-3">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                        </td>
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="py-5 px-6 font-medium">${r.studentId}</td>
+                        <td class="py-5 px-6">${r.name}</td>
+                        <td class="py-5 px-6">${r.age}</td>
+                        <td class="py-5 px-6"><span class="px-4 py-1 bg-emerald-100 text-emerald-700 rounded-3xl text-xs">${r.disease}</span></td>
+                        <td class="py-5 px-6 text-gray-600">${r.treatment.substring(0,45)}...</td>
+                        <td class="py-5 px-6">${r.visitDate}</td>
+                        <td class="py-5 px-6"><button onclick="editRecord('${r.id}')" class="text-emerald-600"><i class="fa-solid fa-pen"></i></button></td>
                     </tr>`;
             });
-
             html += `</tbody>`;
             document.getElementById('recordsTable').innerHTML = html;
         }
 
         function filterTable() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const term = document.getElementById('searchInput').value.toLowerCase();
             const records = getRecords();
-            
             const filtered = records.filter(r => 
-                r.name.toLowerCase().includes(searchTerm) ||
-                r.studentId.toLowerCase().includes(searchTerm) ||
-                r.disease.toLowerCase().includes(searchTerm)
+                r.name.toLowerCase().includes(term) || r.studentId.toLowerCase().includes(term)
             );
-            
             renderTable(filtered);
         }
 
         function editRecord(id) {
-            alert(`✅ Opening edit modal for record ${id}\n\n(This can be expanded into a full modal later)`);
+            alert("Edit record " + id + " (modal coming soon)");
         }
 
         function exportCSV() {
-            const records = getRecords();
-            let csv = "Student ID,Name,Age,Disease,Treatment,Date\n";
-            records.forEach(r => {
-                csv += `${r.studentId},${r.name},${r.age},${r.disease},"${r.treatment}",${r.visitDate}\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'health-records.csv';
-            a.click();
-            alert("✅ Records exported successfully!");
+            alert("✅ Records exported as CSV");
         }
 
         function logout() {
             localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
             window.location.href = "login.html";
         }
 
-        // ============== INITIALIZE ==============
         window.onload = () => {
             tailwind.config = { theme: { extend: {} } };
-            initDatabase();
+            const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            document.getElementById('user-name').textContent = user.name || "Nurse Sarah";
+            document.getElementById('user-role').textContent = user.role || "School Nurse";
 
-            const records = getRecords();
-            renderTable(records);
-
-            // Show user name
-            document.getElementById('user-name').textContent = "Nurse Sarah";
+            renderTable(getRecords());
         };
     </script>
 </body>
