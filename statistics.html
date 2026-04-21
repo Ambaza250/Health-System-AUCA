@@ -10,10 +10,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         body { font-family: 'Inter', system-ui; }
-        .chart-container {
-            height: 320px;
-            position: relative;
-        }
+        .chart-container { height: 320px; position: relative; }
     </style>
 </head>
 <body class="bg-slate-50">
@@ -36,53 +33,43 @@
             </div>
         </div>
 
-        <!-- MAIN -->
         <div class="flex-1 flex flex-col">
             <div class="h-16 bg-white border-b px-8 flex items-center justify-between">
                 <h1 class="text-2xl font-semibold">Statistics</h1>
-                <div class="flex items-center gap-6">
-                    <div class="flex items-center gap-3">
-                        <div class="text-right">
-                            <div class="font-semibold" id="user-name">Nurse Sarah</div>
-                            <div class="text-xs text-gray-500">School Nurse</div>
-                        </div>
-                        <div class="w-9 h-9 bg-emerald-100 rounded-2xl flex items-center justify-center text-xl">👩‍⚕️</div>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="font-semibold" id="user-name"></div>
+                        <div class="text-xs text-gray-500" id="user-role"></div>
                     </div>
+                    <div class="w-9 h-9 bg-emerald-100 rounded-2xl flex items-center justify-center text-xl">👩‍⚕️</div>
                 </div>
             </div>
 
             <div class="flex-1 p-8 overflow-auto">
                 <div class="max-w-7xl mx-auto space-y-8">
-                    <!-- Top Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-3 gap-6">
                         <div class="bg-white rounded-3xl p-8 shadow-sm">
-                            <div class="text-6xl font-bold text-gray-900" id="total-cases">0</div>
-                            <div class="text-gray-500 mt-1">Total Cases</div>
+                            <div class="text-6xl font-bold" id="total-cases">0</div>
+                            <div class="text-gray-500">Total Cases</div>
                         </div>
                         <div class="bg-white rounded-3xl p-8 shadow-sm">
                             <div class="text-5xl font-bold text-orange-500" id="most-common">No Data</div>
-                            <div class="text-gray-500 mt-1">Most Common</div>
+                            <div class="text-gray-500">Most Common</div>
                         </div>
                         <div class="bg-white rounded-3xl p-8 shadow-sm">
-                            <div class="text-6xl font-bold text-gray-900" id="avg-visits">0</div>
-                            <div class="text-gray-500 mt-1">Avg. Daily Visits</div>
+                            <div class="text-6xl font-bold" id="avg-visits">0</div>
+                            <div class="text-gray-500">Avg. Daily Visits</div>
                         </div>
                     </div>
 
-                    <!-- Charts -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-2 gap-6">
                         <div class="bg-white rounded-3xl p-8 shadow-sm">
-                            <h3 class="font-semibold text-lg mb-6">Cases per Disease</h3>
-                            <div class="chart-container">
-                                <canvas id="casesBarChart"></canvas>
-                            </div>
+                            <h3 class="font-semibold mb-6">Cases per Disease</h3>
+                            <div class="chart-container"><canvas id="casesBarChart"></canvas></div>
                         </div>
-
                         <div class="bg-white rounded-3xl p-8 shadow-sm">
-                            <h3 class="font-semibold text-lg mb-6">Visits Over Time</h3>
-                            <div class="chart-container">
-                                <canvas id="visitsLineChart"></canvas>
-                            </div>
+                            <h3 class="font-semibold mb-6">Visits Over Time</h3>
+                            <div class="chart-container"><canvas id="visitsLineChart"></canvas></div>
                         </div>
                     </div>
                 </div>
@@ -95,145 +82,61 @@
 
         function getRecords() {
             if (!localStorage.getItem('healthRecords')) {
-                const initial = [
-                    {disease: "Seasonal Flu", visitDate: "2025-10-15"},
-                    {disease: "Asthma", visitDate: "2025-10-15"},
-                    {disease: "Allergic Reaction", visitDate: "2025-10-14"},
-                    {disease: "Migraine", visitDate: "2025-10-14"},
-                    {disease: "Sprained Ankle", visitDate: "2025-10-13"},
-                    {disease: "Seasonal Flu", visitDate: "2025-10-12"},
-                    {disease: "Dengue Fever", visitDate: "2025-10-12"},
-                    {disease: "Hypertension", visitDate: "2025-10-11"},
-                    {disease: "Common Cold", visitDate: "2025-10-10"},
-                    {disease: "Seasonal Flu", visitDate: "2025-10-09"}
-                ];
-                localStorage.setItem('healthRecords', JSON.stringify(initial));
+                localStorage.setItem('healthRecords', JSON.stringify([]));
             }
-            return JSON.parse(localStorage.getItem('healthRecords') || '[]');
+            return JSON.parse(localStorage.getItem('healthRecords'));
         }
 
-        function calculateStats(records) {
-            const totalCases = records.length;
+        function renderCharts() {
+            const records = getRecords();
             const diseaseCount = {};
             records.forEach(r => {
-                diseaseCount[r.disease] = (diseaseCount[r.disease] || 0) + 1;
+                const d = r.disease || "Unknown";
+                diseaseCount[d] = (diseaseCount[d] || 0) + 1;
             });
 
-            let mostCommon = "No Data";
-            if (Object.keys(diseaseCount).length > 0) {
-                mostCommon = Object.keys(diseaseCount).reduce((a, b) => diseaseCount[a] > diseaseCount[b] ? a : b);
-            }
-
-            const avgVisits = (totalCases / 18.5).toFixed(1);
-
-            return { totalCases, mostCommon, avgVisits, diseaseCount };
-        }
-
-        function renderCharts(records) {
-            const diseaseCount = {};
-            records.forEach(r => diseaseCount[r.disease] = (diseaseCount[r.disease] || 0) + 1);
-
-            const sorted = Object.entries(diseaseCount)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 6);
-
-            const labels = sorted.map(d => d[0].length > 12 ? d[0].substring(0,12) + '...' : d[0]);
+            const sorted = Object.entries(diseaseCount).sort((a,b) => b[1] - a[1]).slice(0,6);
+            const labels = sorted.map(d => d[0]);
             const data = sorted.map(d => d[1]);
 
-            // Max Y value (minimum 10)
             const maxY = Math.max(10, Math.max(...data, 0) * 1.2);
 
             if (barChart) barChart.destroy();
-            if (lineChart) lineChart.destroy();
-
-            // BAR CHART - FIXED Y-AXIS
             barChart = new Chart(document.getElementById('casesBarChart'), {
                 type: 'bar',
-                data: {
-                    labels: labels.length ? labels : ["No Data"],
-                    datasets: [{
-                        label: 'Cases',
-                        data: data.length ? data : [0],
-                        backgroundColor: '#10b981',
-                        borderRadius: 8,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1f2937',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            displayColors: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: maxY,
-                            ticks: {
-                                stepSize: Math.ceil(maxY / 5),
-                                font: { size: 12 }
-                            },
-                            grid: { color: '#f1f5f9' }
-                        },
-                        x: {
-                            grid: { color: '#f1f5f9' },
-                            ticks: { font: { size: 12 } }
-                        }
-                    }
-                }
+                data: { labels: labels.length ? labels : ["No Data"], datasets: [{ data: data.length ? data : [0], backgroundColor: '#10b981', borderRadius: 8 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: maxY }, x: {} }}
             });
 
-            // Line Chart (unchanged)
+            if (lineChart) lineChart.destroy();
             lineChart = new Chart(document.getElementById('visitsLineChart'), {
                 type: 'line',
                 data: {
-                    labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-                    datasets: [{
-                        label: 'Visits',
-                        data: [312, 278, 210, 345, 412, 389],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#fff',
-                        pointBorderWidth: 2
-                    }]
+                    labels: ['May','Jun','Jul','Aug','Sep','Oct'],
+                    datasets: [{ label: 'Visits', data: [312,278,210,345,412,389], borderColor: '#10b981', tension: 0.4, borderWidth: 3 }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { grid: { color: '#f1f5f9' } },
-                        x: { grid: { color: '#f1f5f9' } }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
         function logout() {
             localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
             window.location.href = "login.html";
         }
 
         window.onload = () => {
             tailwind.config = { theme: { extend: {} } };
-            document.getElementById('user-name').textContent = "Nurse Sarah";
+            const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            document.getElementById('user-name').textContent = user.name || "Nurse Sarah";
+            document.getElementById('user-role').textContent = user.role || "School Nurse";
 
             const records = getRecords();
-            const stats = calculateStats(records);
+            document.getElementById('total-cases').textContent = records.length;
+            document.getElementById('most-common').textContent = Object.keys(records.reduce((a,r) => {a[r.disease] = (a[r.disease]||0)+1; return a;}, {})).sort((a,b)=>records.filter(r=>r.disease===b).length - records.filter(r=>r.disease===a).length)[0] || "No Data";
+            document.getElementById('avg-visits').textContent = (records.length / 18.5).toFixed(1);
 
-            document.getElementById('total-cases').textContent = stats.totalCases;
-            document.getElementById('most-common').textContent = stats.mostCommon;
-            document.getElementById('avg-visits').textContent = stats.avgVisits;
-
-            renderCharts(records);
+            renderCharts();
         };
     </script>
 </body>
